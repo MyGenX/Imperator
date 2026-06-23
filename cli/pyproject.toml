@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "imperator-cli"
+version = "0.1.0"
+description = "👑 Imperator — Reusable rules for AI coding agents"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+dependencies = ["Jinja2>=3.0"]
+
+[project.scripts]
+imperator = "imperator.main:main"
+
+[tool.setuptools]
+packages = ["imperator", "imperator.commands"]
+
+[tool.setuptools.package-data]
+imperator = ["templates/*.j2"]
