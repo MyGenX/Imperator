@@ -4,10 +4,10 @@
 
 ```bash
 # macOS / Linux / WSL
-curl -fsSL https://raw.githubusercontent.com/VachaganGrigoryan/Imperator/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/MyGenX/Imperator/main/install.sh | bash
 
 # Windows PowerShell
-irm https://raw.githubusercontent.com/VachaganGrigoryan/Imperator/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/MyGenX/Imperator/main/install.ps1 | iex
 ```
 
 Or, from a checkout:

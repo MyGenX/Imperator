@@ -2,7 +2,7 @@
 # Requires PowerShell 5.1+, Git, and Python 3.8+
 
 $ErrorActionPreference = "Stop"
-$REPO = if ($env:IMPERATOR_REPO) { $env:IMPERATOR_REPO } else { "https://github.com/VachaganGrigoryan/Imperator" }
+$REPO = if ($env:IMPERATOR_REPO) { $env:IMPERATOR_REPO } else { "https://github.com/MyGenX/Imperator" }
 $IMPERATOR_DIR = if ($env:IMPERATOR_DIR) { $env:IMPERATOR_DIR } else { "$HOME\.imperator" }
 
 Write-Host ""

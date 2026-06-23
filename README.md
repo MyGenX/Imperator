@@ -28,12 +28,12 @@ install once and use everywhere.
 
 **macOS / Linux / WSL:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/VachaganGrigoryan/Imperator/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/MyGenX/Imperator/main/install.sh | bash
 ```
 
 **Windows (PowerShell 5.1+):**
 ```powershell
-irm https://raw.githubusercontent.com/VachaganGrigoryan/Imperator/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/MyGenX/Imperator/main/install.ps1 | iex
 ```
 
 **Requirements:** Git + Python 3.8+

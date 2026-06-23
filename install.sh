@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-REPO="${IMPERATOR_REPO:-https://github.com/VachaganGrigoryan/Imperator}"
+REPO="${IMPERATOR_REPO:-https://github.com/MyGenX/Imperator}"
 IMPERATOR_DIR="${IMPERATOR_DIR:-$HOME/.imperator}"
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
