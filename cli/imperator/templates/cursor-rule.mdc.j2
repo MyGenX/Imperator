@@ -1,6 +1,6 @@
 ---
 description: {{ description | toml_string }}
-alwaysApply: {% if always_apply %}true{% else %}false{% endif %}
+alwaysApply: {{ "true" if always_apply else "false" }}
 {% if globs %}globs:
 {% for p in globs %}  - {{ p | toml_string }}
 {% endfor %}{% endif %}---

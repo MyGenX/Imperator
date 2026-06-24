@@ -76,7 +76,6 @@ def _apply_rules(workdir: Path, condition: Condition, task: Task) -> None:
         style=condition.style,
         out_dir=workdir,
         agent="claude-code",
-        layout="modular",
     )
     # The compiled .claude/ tree is part of the given scaffold, not an agent edit —
     # commit it so it never shows up in the post-run diff.

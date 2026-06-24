@@ -14,7 +14,7 @@ dependencies = ["Jinja2>=3.0"]
 imperator = "imperator.main:main"
 
 [tool.setuptools]
-packages = ["imperator", "imperator.commands"]
+packages = ["imperator", "imperator.commands", "imperator.renderers"]
 
 [tool.setuptools.package-data]
 imperator = ["templates/*.j2"]

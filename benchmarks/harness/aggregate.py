@@ -176,26 +176,34 @@ def _fmt_rate(r) -> str:
 
 def _static_section() -> str:
     """Regenerate the deterministic ruleset-size table (context cost per session)."""
+    import tempfile
+
     rows = []
     cases = [
-        ("minimal (core only)", []),
+        ("minimal (global only)", []),
         ("fullstack-js", engine.resolve_profile("fullstack-js")),
         ("python-api", engine.resolve_profile("python-api")),
-        ("all extensions", list(engine.EXTENSIONS_AVAILABLE)),
+        ("all domains", list(engine.DOMAINS_AVAILABLE)),
     ]
-    for label, exts in cases:
-        groups = engine.filter_by_agent(engine.load_groups(exts), "claude-code")
+    for label, domains in cases:
+        groups = engine.filter_by_agent(
+            engine.load_global() + engine.load_domains(domains), "claude-code"
+        )
         n = sum(len(g.rules) for g in groups)
         for style in ("compact", "full"):
-            text = engine.render(groups, "claude-code", style)
+            with tempfile.TemporaryDirectory() as tmp:
+                written = engine.compile_project(
+                    domains, [], style=style, out_dir=tmp, agent="claude-code",
+                )
+                chars = sum(len(p.read_text(encoding="utf-8")) for p in written)
             rows.append(
-                f"| `{label}` | {n} | {style} | {len(text):,} | "
-                f"~{engine.estimate_tokens(text):,} |"
+                f"| `{label}` | {n} | {style} | {chars:,} | "
+                f"~{engine.estimate_tokens('x' * chars):,} |"
             )
     body = [
         "## Static ruleset size (context cost per session)\n",
-        "The fixed cost you pay every session for carrying the rules. Token figures use "
-        "a ~4-chars/token heuristic.\n",
+        "Total chars across the generated Claude Code `.claude/` files (global + "
+        "path-scoped domains). Token figures use a ~4-chars/token heuristic.\n",
         "| Selection | Rules | Style | Chars | ≈ Tokens |",
         "|---|---|---|---|---|",
         *rows,

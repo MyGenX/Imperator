@@ -271,6 +271,90 @@ def test_old_flat_templates_are_removed():
     assert not (templates / "gemini.j2").exists()
 
 
+# ── per-renderer schema (generated markers + native frontmatter) ─────────────
+
+def _compile(tmp_path, agent, domains=("python", "typescript"),
+             roles=("backend-developer",)):
+    engine.compile_project(list(domains), list(roles), style="compact",
+                           out_dir=tmp_path, agent=agent, root=REPO_ROOT)
+    return tmp_path
+
+
+def test_claude_schema_frontmatter_before_marker(tmp_path):
+    root = _compile(tmp_path, "claude-code")
+
+    domain = (root / ".claude/rules/python.md").read_text(encoding="utf-8")
+    assert domain.startswith("---")                       # YAML frontmatter first
+    assert "paths:" in domain
+    assert domain.index("paths:") < domain.index(engine.MARKER_BEGIN)
+    assert engine.MARKER_END in domain
+
+    glob = (root / ".claude/rules/global.md").read_text(encoding="utf-8")
+    assert engine.MARKER_BEGIN in glob and engine.MARKER_END in glob
+    assert "---\npaths" not in glob.lstrip()              # global is not path-scoped
+
+    agent_file = (root / ".claude/agents/backend-developer.md").read_text(encoding="utf-8")
+    for field in ("name:", "description:", "model:"):
+        assert field in agent_file
+        assert agent_file.index(field) < agent_file.index(engine.MARKER_BEGIN)
+
+
+def test_cursor_schema_frontmatter_before_marker(tmp_path):
+    root = _compile(tmp_path, "cursor")
+
+    glob = (root / ".cursor/rules/global.mdc").read_text(encoding="utf-8")
+    assert glob.startswith("---")
+    assert "alwaysApply: true" in glob
+    assert glob.index("alwaysApply") < glob.index(engine.MARKER_BEGIN)
+
+    domain = (root / ".cursor/rules/domains/python.mdc").read_text(encoding="utf-8")
+    assert "globs:" in domain
+    assert domain.index("globs:") < domain.index(engine.MARKER_BEGIN)
+    assert '"**/*.py"' in domain
+
+
+def test_codex_schema_agents_md_and_toml_agent(tmp_path):
+    root = _compile(tmp_path, "codex")
+
+    agents_md = (root / "AGENTS.md").read_text(encoding="utf-8")
+    assert engine.MARKER_BEGIN in agents_md and engine.MARKER_END in agents_md
+    assert "# Imperator Global Rules" in agents_md
+    assert "# Active Domain Rules" in agents_md
+
+    toml_agent = (root / ".codex/agents/backend-developer.toml").read_text(encoding="utf-8")
+    assert f"# {engine.MARKER_BEGIN}" in toml_agent      # toml-comment marker
+    assert 'name = "backend-developer"' in toml_agent
+    assert "developer_instructions =" in toml_agent
+
+    assert (root / ".codex/rules/global.md").is_file()   # reviewable artifacts only
+    assert not (root / ".claude").exists()
+
+
+def test_gemini_schema_md_rules_and_command(tmp_path):
+    root = _compile(tmp_path, "gemini")
+
+    gemini_md = (root / "GEMINI.md").read_text(encoding="utf-8")
+    assert engine.MARKER_BEGIN in gemini_md
+    assert "@.gemini/rules/global.md" in gemini_md
+
+    rule = (root / ".gemini/rules/domains/python.md").read_text(encoding="utf-8")
+    assert engine.MARKER_BEGIN in rule and engine.MARKER_END in rule
+
+    command = (root / ".gemini/commands/roles/backend-developer.toml").read_text(encoding="utf-8")
+    assert f"# {engine.MARKER_BEGIN}" in command
+
+
+def test_engine_facade_reexports_submodules():
+    # the shim must keep re-exporting the split modules' public names
+    from imperator import catalog, compiler, loader, parser
+    from imperator.renderers import RENDERERS
+    assert engine.compile_project is compiler.compile_project
+    assert engine.parse_file is parser.parse_file
+    assert engine.find_root is loader.find_root
+    assert engine.VERSION == catalog.VERSION
+    assert set(RENDERERS) == set(engine.AGENTS)
+
+
 def test_estimate_tokens():
     assert engine.estimate_tokens("a" * 400) == 100
 
