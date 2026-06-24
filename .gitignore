@@ -16,3 +16,6 @@ venv/
 
 # Imperator project config generated in user projects (not in this repo root)
 /.imperator.json
+
+# Generated agent outputs; source of truth is rules/ + CLI templates.
+/agents/
