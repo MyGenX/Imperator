@@ -25,27 +25,45 @@ imperator init
 ```
 
 You'll be asked for:
-- which **extensions** apply to your stack,
-- which **agent** you use (Claude Code, Cursor, Codex, Gemini),
-- which **style** to write (`compact` or `full`).
+- **domains** — the tech stacks in your project (python, typescript, postgres, ...),
+- **roles** — specialist subagents to add (backend-developer, qa-engineer, ...),
+- **agent** (Claude Code, Cursor, Codex, Gemini) and **style** (`compact` / `full`).
 
-This writes the agent file (e.g. `CLAUDE.md`) and a small `.imperator.json` config.
+For **Claude Code** this writes a modular `.claude/` tree:
 
-Prefer a one-liner? Use a profile:
+```
+.claude/
+  CLAUDE.md            # thin pointer
+  rules/
+    global.md          # always-on rules
+    python.md          # path-scoped: loads only when editing **/*.py
+    ...
+  agents/
+    backend-developer.md   # specialist subagent
+    ...
+.imperator.json
+```
+
+Prefer a one-liner? Use a profile (domain bundle) and `--role`:
 
 ```bash
-imperator init --profile fullstack-js --agent claude-code --style compact
+imperator init --profile python-api --agent claude-code --style compact \
+  --role backend-developer --role qa-engineer
 ```
 
 ## 3. Evolve
 
 ```bash
-imperator add docker          # add an extension and recompile
-imperator compile --agent all # regenerate every agent file
-imperator stats               # see compiled size / token estimate
+imperator add docker              # add a tech-stack (domain) and recompile
+imperator role add devops         # add a specialist subagent
+imperator role list               # see available roles
+imperator list                    # see all domains and roles
+imperator compile                 # regenerate .claude/ from config
+imperator compile --layout flat   # single-file output instead
+imperator stats                   # token impact by tier
 ```
 
-## 4. Commit the agent file
+## 4. Commit the output
 
-Commit the generated `CLAUDE.md` / `.cursorrules` / `AGENTS.md` / `GEMINI.md` (and
-`.imperator.json`) so your whole team shares the same rules.
+Commit the generated `.claude/` tree (or the flat agent file) and `.imperator.json`
+so your whole team shares the same rules and role subagents.

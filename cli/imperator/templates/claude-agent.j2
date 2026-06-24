@@ -1,0 +1,21 @@
+---
+name: {{ role.name }}
+description: {{ role.description }}
+{% if role.tools %}tools: {{ role.tools }}
+{% endif %}model: {{ role.model }}
+---
+
+{{ persona }}
+
+<!-- Imperator v{{ version }}: global rules + active domains embedded below. Do not edit by hand. -->
+
+# Imperator Global Rules
+
+{{ global_block }}
+{% if domain_block %}
+
+# Active Domain Rules{% if active_domains %} ({{ active_domains | join(", ") }}){% endif %}
+
+
+{{ domain_block }}
+{% endif %}

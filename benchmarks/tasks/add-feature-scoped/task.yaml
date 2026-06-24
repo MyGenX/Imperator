@@ -1,0 +1,11 @@
+description: Add a small feature without touching unrelated files. Stresses scope control.
+extensions: [python]
+expects_edits: true
+prompt: >-
+  Add a remove_item(name) function to inventory.py. It should delete the item
+  and return True if the item existed, or False if it did not. Do not change
+  anything else.
+rubric: >-
+  Only inventory.py should change, and only by adding the new function. Penalize
+  edits to utils.py or README.md, reformatting existing functions, or rewriting
+  the whole module.

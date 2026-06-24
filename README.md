@@ -45,24 +45,28 @@ From a checkout you can also just `pip install -e cli`.
 ## Quick Start
 
 ```bash
-# Set up your project interactively (asks for extensions, agent, and style)
+# Set up your project interactively (asks for domains, roles, agent, style)
 imperator init
 
-# Or use a pre-built profile
-imperator init --profile fullstack-js
-imperator init --profile python-api
-imperator init --profile minimal
+# Or use a pre-built profile (domain bundle) + roles
+imperator init --profile python-api --role backend-developer --role qa-engineer
 
-# Add extensions later
-imperator add nextjs
-imperator add python fastapi postgres
+# Add tech-stack (domain) rules later
+imperator add python typescript postgres
 
-# Regenerate agent files anytime
-imperator compile
-imperator compile --agent cursor
-imperator compile --agent all --style full
+# Add specialist role subagents
+imperator role add frontend-developer
+imperator role list
 
-# See how big the compiled ruleset is
+# See everything available
+imperator list
+
+# Regenerate output anytime
+imperator compile                 # .claude/ tree (Claude Code)
+imperator compile --layout flat   # single-file output instead
+imperator compile --agent all     # flat files for every agent
+
+# Token impact, broken down by tier
 imperator stats
 ```
 
@@ -70,23 +74,32 @@ imperator stats
 
 ## How It Works
 
+Imperator has **three tiers**, authored once and compiled into the layout your agent
+loads natively. For Claude Code that's a modular `.claude/` tree:
+
 ```
-core rules          +    extensions      =    your CLAUDE.md
-─────────────────        ──────────────       ──────────────
-output.md                nextjs.md            compiled &
-investigation.md    +    typescript.md   →    merged into
-processing.md            postgres.md          one file
-behavior.md
-safety.md
+rules/                          .claude/
+  global/      ──────────────►    rules/global.md        (always loaded)
+    output.md ...
+  domains/     ──────────────►    rules/python.md        (path-scoped: **/*.py)
+    python.md ...                 rules/typescript.md     (path-scoped: **/*.{ts,tsx})
+  roles/       ──────────────►    agents/backend-developer.md   (subagent)
+    qa-engineer.md ...            agents/qa-engineer.md         (subagent)
 ```
 
-1. **Core rules** apply to every project — output, investigation, processing, behavior, safety
-2. **Extensions** add stack-specific rules for your tech
-3. **The compiler** merges everything into the right file for your agent
-4. **Done** — your agent follows Imperator rules every session
+1. **Global rules** apply to every project — output, investigation, processing, behavior, safety. Always loaded.
+2. **Domain rules** are tech-stack rules (python, typescript, postgres, ...). They are
+   **path-scoped** — they load only when the agent touches matching files, so they cost
+   nothing the rest of the time.
+3. **Roles** are specialist personas (backend developer, frontend developer, QA, DevOps,
+   business analyst) compiled to native **subagents** the agent delegates to by task.
+4. **Done** — Claude Code loads `.claude/rules/` and `.claude/agents/` automatically.
+
+> Cursor, Codex, and Gemini use the legacy **flat** single-file output (global + domains).
+> Roles (subagents) are Claude Code only for now.
 
 Rules are authored once in a compact form (single source of truth). At compile time
-you choose how they are written into the agent file:
+you choose how they are written:
 
 | Style | Looks like | Best for |
 |---|---|---|
@@ -112,18 +125,35 @@ imperator compile --style full
 
 ---
 
-## Available Extensions
+## Available Domains (tech stacks)
 
-| Extension | Stack |
-|---|---|
-| `nextjs` | Next.js 14+ App Router |
-| `react` | React general |
-| `typescript` | TypeScript strict rules |
-| `python` | Python best practices |
-| `fastapi` | FastAPI patterns |
-| `postgres` | PostgreSQL + Prisma/SQLAlchemy |
-| `docker` | Docker & Compose |
-| `api-rest` | REST API design rules |
+Each domain is **path-scoped** — it loads only when the agent works on matching files.
+
+| Domain | Stack | Path scope |
+|---|---|---|
+| `nextjs` | Next.js 14+ App Router | `app/**`, `pages/**`, `**/*.{tsx,ts,jsx,js}` |
+| `react` | React general | `**/*.{jsx,tsx}` |
+| `typescript` | TypeScript strict rules | `**/*.{ts,tsx}` |
+| `python` | Python best practices | `**/*.py` |
+| `fastapi` | FastAPI patterns | `**/*.py` |
+| `postgres` | PostgreSQL + Prisma/SQLAlchemy | `**/*.sql`, `**/migrations/**` |
+| `docker` | Docker & Compose | `**/Dockerfile`, `**/compose*.y*ml` |
+| `api-rest` | REST API design rules | `**/{api,routes,controllers}/**` |
+
+## Available Roles (subagents)
+
+| Role | Delegates | Domains it knows |
+|---|---|---|
+| `business-analyst` | requirements, user stories, scope (no code) | — |
+| `backend-developer` | server logic, APIs, data, migrations | python, fastapi, postgres, api-rest |
+| `frontend-developer` | UI, components, state, a11y | typescript, react, nextjs |
+| `qa-engineer` | tests, edge cases, regression | python, typescript, fastapi, react |
+| `devops` | build, CI/CD, containers, deploy | docker, postgres |
+
+```bash
+imperator role add backend-developer qa-engineer
+imperator role list
+```
 
 ---
 
@@ -141,14 +171,15 @@ imperator init --profile minimal        # core rules only
 
 ## Supported Agents
 
-| Agent | File Generated |
-|---|---|
-| Claude Code | `CLAUDE.md` |
-| Cursor | `.cursorrules` |
-| Codex | `AGENTS.md` |
-| Gemini | `GEMINI.md` |
+| Agent | Output | Layout |
+|---|---|---|
+| Claude Code | `.claude/rules/` + `.claude/agents/` | **modular** (path-scoped rules + role subagents) |
+| Cursor | `.cursorrules` | flat |
+| Codex | `AGENTS.md` | flat |
+| Gemini | `GEMINI.md` | flat |
 
-Compiled examples of the full ruleset live in [`agents/`](agents/).
+Compiled examples of the full ruleset live in [`agents/`](agents/) — see
+[`agents/claude-code/.claude/`](agents/claude-code/.claude/) for the modular layout.
 
 ---
 
@@ -170,8 +201,10 @@ Every rule needs a unique ID (e.g. `IMP-OUT-001`), a kebab-case name, and a seve
 - [x] `install.sh` + `install.ps1`
 - [x] Python CLI (`init`, `add`, `compile`, `stats`)
 - [x] Compact **and** full-frontmatter output styles
-- [ ] Token savings benchmarks (real-world)
-- [ ] Community rule submissions
+- [x] Token savings benchmarks (real-world harness — `benchmarks/`)
+- [x] Modular `.claude/` layout — path-scoped domain rules + role subagents
+- [ ] Modular native layouts for Cursor (`.cursor/rules/*.mdc`), Codex, Gemini
+- [ ] Community rule + role submissions
 - [ ] Website + docs
 
 ---

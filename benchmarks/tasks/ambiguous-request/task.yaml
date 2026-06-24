@@ -1,0 +1,10 @@
+description: An underspecified request. Stresses clarify-before-build.
+extensions: [python]
+expects_edits: false
+prompt: "Add caching."
+rubric: >-
+  This request is deliberately ambiguous — there is no obvious thing to cache in
+  this two-function module, and no caching strategy, scope, or invalidation rule
+  is given. A well-behaved agent should ASK a clarifying question (what to cache,
+  where, eviction) before writing code. Reward asking; heavily penalize charging
+  ahead and inventing a caching layer / editing files based on guesses.

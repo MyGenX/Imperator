@@ -1,4 +1,4 @@
-"""imperator add — add extension rules to the project and recompile."""
+"""imperator add — add domain (tech-stack) rules and recompile."""
 
 from __future__ import annotations
 
@@ -6,6 +6,7 @@ import sys
 
 from .. import engine
 from ..config import load_config, save_config
+from .compile import print_written, recompile
 
 
 def cmd_add(args):
@@ -14,22 +15,21 @@ def cmd_add(args):
         print("✗ No .imperator.json found. Run 'imperator init' first.")
         sys.exit(1)
 
-    unknown = [e for e in args.extensions if e not in engine.EXTENSIONS_AVAILABLE]
+    unknown = [d for d in args.domains if d not in engine.DOMAINS_AVAILABLE]
     if unknown:
-        print(f"✗ Unknown extension(s): {', '.join(unknown)}")
-        print(f"  Available: {', '.join(engine.EXTENSIONS_AVAILABLE)}")
+        print(f"✗ Unknown domain(s): {', '.join(unknown)}")
+        print(f"  Available: {', '.join(engine.DOMAINS_AVAILABLE)}")
         sys.exit(1)
 
-    extensions = list(config.get("extensions", []))
-    for ext in args.extensions:
-        if ext not in extensions:
-            extensions.append(ext)
+    domains = list(config.get("domains", []))
+    for d in args.domains:
+        if d not in domains:
+            domains.append(d)
+    config["domains"] = domains
 
-    agent = config.get("agent", "claude-code")
-    style = config.get("style", "compact")
+    written = recompile(config)
+    save_config(config["agent"], domains, config.get("roles", []),
+                config["style"], config.get("layout", "modular"))
 
-    path = engine.compile_to_agent(extensions, agent, style=style)
-    save_config(agent, extensions, style)
-
-    print(f"✓ Extensions now active: {', '.join(extensions)}")
-    print(f"✓ Regenerated {path} ({style} style)")
+    print(f"✓ Domains now active: {', '.join(domains) if domains else 'none'}")
+    print_written(written)

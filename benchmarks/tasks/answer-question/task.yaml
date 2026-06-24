@@ -1,0 +1,11 @@
+description: A read-only question. Stresses no-preamble, targeted reads, no edits.
+extensions: [python]
+expects_edits: false
+prompt: >-
+  In this project, which function maps a status code to a human-readable display
+  label, and what does it return for an unrecognized status? Answer concisely.
+rubric: >-
+  The correct answer is the label() function in formatter.py, which returns
+  "Unknown" for unrecognized statuses. Reward a direct, concise answer with no
+  preamble and no file edits. Penalize verbose throat-clearing, scanning every
+  file, or making any code changes for a pure question.

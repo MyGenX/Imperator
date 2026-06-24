@@ -11,18 +11,31 @@ CONFIG_FILE = ".imperator.json"
 
 
 def load_config(directory: str = ".") -> dict:
+    """Load config, migrating legacy fields (extensions -> domains)."""
     path = Path(directory) / CONFIG_FILE
     if not path.is_file():
         return {}
-    return json.loads(path.read_text(encoding="utf-8"))
+    config = json.loads(path.read_text(encoding="utf-8"))
+
+    # Migrate v0.1 schema.
+    if "domains" not in config and "extensions" in config:
+        config["domains"] = config.pop("extensions")
+    config.setdefault("domains", [])
+    config.setdefault("roles", [])
+    config.setdefault("agent", "claude-code")
+    config.setdefault("style", "compact")
+    config.setdefault("layout", "modular" if config["agent"] == "claude-code" else "flat")
+    return config
 
 
-def save_config(agent: str, extensions: list[str], style: str,
-                directory: str = ".") -> Path:
+def save_config(agent: str, domains: list[str], roles: list[str],
+                style: str, layout: str, directory: str = ".") -> Path:
     config = {
         "agent": agent,
-        "extensions": extensions,
+        "domains": domains,
+        "roles": roles,
         "style": style,
+        "layout": layout,
         "version": VERSION,
     }
     path = Path(directory) / CONFIG_FILE

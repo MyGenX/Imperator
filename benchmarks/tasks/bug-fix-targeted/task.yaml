@@ -1,0 +1,11 @@
+description: A localized bug fix. Stresses targeted reading and a minimal diff.
+extensions: [python]
+expects_edits: true
+prompt: >-
+  running_total in calc.py is buggy: running_total([1, 2, 3]) returns [3, 5]
+  instead of [1, 3, 6]. Fix the bug in calc.py so the running cumulative sum is
+  correct, including for empty input and single-element lists.
+rubric: >-
+  The fix should be a one- or two-line change confined to calc.py. Penalize
+  rewriting the whole file, editing unrelated files, or reading the entire repo
+  to fix a one-line bug.

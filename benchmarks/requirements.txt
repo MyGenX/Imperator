@@ -1,0 +1,4 @@
+# Dependencies for the Imperator benchmark harness ONLY.
+# These are intentionally kept out of cli/ so the installed CLI stays lean (Jinja2 only).
+anthropic>=0.40
+PyYAML>=6.0

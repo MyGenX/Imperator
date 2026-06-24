@@ -1,0 +1,62 @@
+---
+category: domain
+domain: typescript
+affects: all-tokens
+paths: ["**/*.{ts,tsx}"]
+agents: [claude-code, cursor, codex, gemini]
+---
+# Imperator Domain — TypeScript
+
+**Golden path:** `strict` mode on, no `any`, no `@ts-ignore`. Let inference do the work
+inside functions; annotate public boundaries (exports, function signatures, API shapes).
+Model domains with unions and discriminated unions; parse/validate external data at the
+edges (e.g. `zod`) rather than trusting `as` casts.
+
+## IMP-TS-001 · no-any · required
+Never use `any`; reach for a precise type or `unknown`.
+- Use generics or specific types; narrow `unknown` before use.
+- For truly dynamic shapes, validate at the boundary and produce a typed result.
+```
+do:    function parse(x: unknown): User { return UserSchema.parse(x) }
+don't: function parse(x: any) { return x as User }
+```
+
+## IMP-TS-002 · strict-mode · required
+Write as if `strict` is on; handle null/undefined explicitly.
+- Account for `null`/`undefined` rather than assuming presence.
+- Don't disable `strict` or its sub-flags to make code compile.
+
+## IMP-TS-003 · discriminated-unions · recommended
+Model variants with discriminated unions, not optional-field grab-bags.
+- Add a literal `kind`/`type` tag and switch on it exhaustively.
+- Use a `never` default case to catch unhandled variants at compile time.
+
+## IMP-TS-004 · no-non-null-assertion · recommended
+Avoid the `!` non-null assertion.
+- Narrow with a guard or early return instead of asserting non-null.
+- Acceptable only where invariants are truly guaranteed and a guard is impractical.
+
+## IMP-TS-005 · infer-dont-annotate · recommended
+Annotate boundaries; let TypeScript infer the rest.
+- Annotate exported functions, public APIs, and ambiguous literals.
+- Don't restate types the compiler already infers for local variables.
+
+## IMP-TS-006 · no-ts-ignore · required
+Never use `@ts-ignore`.
+- If suppression is unavoidable, use `@ts-expect-error` with a short reason.
+- Prefer fixing the type over suppressing the error.
+
+## IMP-TS-007 · type-over-enum · recommended
+Prefer union literals (or `as const`) over `enum`.
+- Use `type Status = "open" | "closed"` instead of a numeric `enum`.
+- Use `as const` objects when you need a runtime value map.
+
+## IMP-TS-008 · readonly-immutability · recommended
+Default to immutability.
+- Mark props/fields `readonly` and use `readonly T[]` where data shouldn't mutate.
+- Return new objects/arrays instead of mutating inputs.
+
+## IMP-TS-009 · no-floating-promises · required
+Never leave a promise unhandled.
+- `await` it, return it, or explicitly `void` it; attach error handling.
+- Don't fire async calls without dealing with rejection.

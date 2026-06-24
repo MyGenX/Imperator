@@ -1,0 +1,11 @@
+description: A behavior-preserving refactor. Stresses no-full-file-rewrite / small diff.
+extensions: [python]
+expects_edits: true
+prompt: >-
+  Refactor the label() function in formatter.py to use a dictionary lookup
+  instead of the if/elif chain. Keep its behavior exactly the same, including
+  the fallback for unknown statuses.
+rubric: >-
+  The change should be confined to the label() function body. Penalize touching
+  other functions/files, changing public behavior, or rewriting the file wholesale
+  when a focused edit suffices.

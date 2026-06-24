@@ -4,18 +4,21 @@ Thanks for helping command AI agents better!
 
 ## Ways to contribute
 
-- **Add a rule** to an existing core file or extension
-- **Add an extension** for a new stack
+- **Add a rule** to an existing global or domain file
+- **Add a domain** for a new tech stack
+- **Add a role** (specialist subagent)
 - **Improve docs** or the CLI
 
 ## Adding a rule
 
 Rules are authored once in **compact form** — see [docs/rules-spec.md](docs/rules-spec.md)
-for the full spec. In short, add a heading to the relevant file:
+for the full spec. Each rule is a directive line followed by a few bullets:
 
 ```markdown
 ## IMP-OUT-008 · my-rule-name · recommended
-One or two lines describing exactly what the agent should (not) do.
+One imperative sentence stating the rule, concrete enough to verify.
+- A specific boundary or exception (when it does / doesn't apply).
+- Another short, testable specific.
 ```
 
 Requirements for every rule:
@@ -24,15 +27,24 @@ Requirements for every rule:
   that file.
 - **kebab-case name** — short and descriptive.
 - **Severity** — `required`, `recommended`, or `optional`.
-- **Imperative, testable wording** — say what to do, not background theory.
+- **Directive + bullets** — imperative directive first, then 2–4 testable bullets. Keep it
+  lean (global rules are always in context). Add a compact `do:`/`don't:` block only for
+  high-impact rules where the directive alone is easy to misread.
 
-## Adding an extension
+## Adding a domain (tech stack)
 
-1. Create `extensions/<name>.md` with file frontmatter (`category: extension`,
-   `affects`, `extends: core`, `agents`).
-2. Add `<name>` to `EXTENSIONS_AVAILABLE` in `cli/imperator/engine.py`.
+1. Create `rules/domains/<name>.md` with file frontmatter (`category: domain`,
+   `domain: <name>`, `affects`, `paths: [...]` globs, `agents`).
+2. Add `<name>` to `DOMAINS_AVAILABLE` in `cli/imperator/engine.py`.
 3. If it belongs in a profile, update `PROFILES` in the same file.
 4. Regenerate examples: `python compiler/compile.py`.
+
+## Adding a role (subagent)
+
+1. Create `rules/roles/<name>.md` with frontmatter (`role`, `description`, `tools`,
+   `model`, `domains: [...]`) and a system-prompt body.
+2. Add `<name>` to `ROLES_AVAILABLE` in `cli/imperator/engine.py`.
+3. Regenerate examples: `python compiler/compile.py`.
 
 ## Before opening a PR
 

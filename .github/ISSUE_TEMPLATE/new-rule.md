@@ -7,8 +7,8 @@ labels: rule
 
 ## Proposed rule
 
-**Category:** <!-- output | investigation | processing | behavior | safety | extension -->
-**Target file:** <!-- e.g. core/output.md or extensions/nextjs.md -->
+**Category:** <!-- output | investigation | processing | behavior | safety | domain -->
+**Target file:** <!-- e.g. rules/global/output.md or rules/domains/nextjs.md -->
 **Suggested ID:** <!-- e.g. IMP-OUT-008 -->
 **Name:** <!-- kebab-case -->
 **Severity:** <!-- required | recommended | optional -->
