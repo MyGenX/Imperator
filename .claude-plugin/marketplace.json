@@ -1,0 +1,14 @@
+{
+  "name": "imperator",
+  "owner": {
+    "name": "MyGenX"
+  },
+  "plugins": [
+    {
+      "name": "imperator",
+      "source": "./plugins/imperator",
+      "description": "Reusable working rules and specialist role subagents for AI coding agents.",
+      "version": "0.3.0"
+    }
+  ]
+}

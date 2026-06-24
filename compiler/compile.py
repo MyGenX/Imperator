@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
-"""Smoke-build generated agent outputs from the full ruleset.
+"""Maintainer build tool.
 
-The repository no longer commits generated `agents/` snapshots. This maintainer
-tool verifies that every supported agent can still be generated from `rules/`
-and the CLI templates.
+  - Smoke-builds every supported agent's native output from `rules/` (no committed
+    `agents/` snapshots).
+  - Regenerates the committed distribution: the Claude Code plugin under
+    `plugins/imperator/` and the repo-root `.claude-plugin/marketplace.json`.
+
+Run with `--check` in CI to fail if the committed plugin/marketplace drift from the
+rule sources (i.e. were hand-edited instead of regenerated).
 """
 
 from __future__ import annotations
@@ -40,13 +44,30 @@ def smoke_build() -> list[str]:
 
 
 def main(argv=None) -> int:
-    parser = argparse.ArgumentParser(description="Smoke-build generated agent outputs")
+    parser = argparse.ArgumentParser(
+        description="Smoke-build agent outputs and sync the committed plugin/marketplace")
     parser.add_argument("--check", action="store_true",
-                        help="Alias for the default smoke build")
-    parser.parse_args(argv)
+                        help="Verify the committed plugin/marketplace are in sync (no writes)")
+    args = parser.parse_args(argv)
 
+    from imperator.renderers import skills  # noqa: E402
+
+    # Per-agent generation must keep working for every supported agent.
     for summary in smoke_build():
         print(f"✓ {summary}")
+
+    if args.check:
+        problems = skills.check_distribution(REPO_ROOT, STYLE)
+        if problems:
+            print("✗ Plugin/marketplace out of sync (run: python compiler/compile.py):")
+            for p in problems:
+                print(f"  - {p}")
+            return 1
+        print("✓ plugin/marketplace: in sync")
+        return 0
+
+    written = skills.write_distribution(REPO_ROOT, STYLE)
+    print(f"✓ plugin/marketplace: wrote {len(written)} files")
     return 0
 
 

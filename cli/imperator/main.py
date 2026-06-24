@@ -11,6 +11,7 @@ from .commands.add import cmd_add
 from .commands.clean import cmd_clean
 from .commands.compile import cmd_compile
 from .commands.doctor import cmd_doctor
+from .commands.export import cmd_export
 from .commands.init import cmd_init
 from .commands.list import cmd_list
 from .commands.role import cmd_role
@@ -33,6 +34,7 @@ Examples:
   imperator compile                       Regenerate native output from config
   imperator doctor                        Check install, config, and generated files
   imperator clean                         Remove Imperator-generated agent files
+  imperator export --format skills        Emit installable skill bundles
   imperator stats                         Token impact by tier
         """,
     )
@@ -71,6 +73,10 @@ Examples:
     sub.add_parser("stats", help="Show estimated token impact by tier")
     sub.add_parser("list", help="Show available domains and roles")
 
+    p_export = sub.add_parser("export", help="Export rules as installable skill bundles")
+    p_export.add_argument("--format", choices=["skills"], default="skills")
+    p_export.add_argument("--out", help="Output directory (default: dist/skills)")
+
     return parser
 
 
@@ -91,6 +97,7 @@ def main(argv=None):
         "clean": cmd_clean,
         "stats": cmd_stats,
         "list": cmd_list,
+        "export": cmd_export,
     }
     commands[args.command](args)
 

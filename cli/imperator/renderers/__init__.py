@@ -27,6 +27,15 @@ from .claude import (
 from .cursor import CursorRenderer, render_cursor_role_rule, render_cursor_rule_file
 from .codex import CodexRenderer, render_codex_agent, render_codex_agents_md
 from .gemini import GeminiRenderer, render_gemini_command, render_gemini_md
+from .skills import (
+    build_skills_bundle,
+    check_distribution,
+    distribution_files,
+    render_marketplace_json,
+    render_plugin_json,
+    render_role_skill,
+    write_distribution,
+)
 
 #: agent name -> renderer instance (dispatch table used by the compiler)
 RENDERERS = {
@@ -45,4 +54,7 @@ __all__ = [
     "CursorRenderer", "render_cursor_role_rule", "render_cursor_rule_file",
     "CodexRenderer", "render_codex_agent", "render_codex_agents_md",
     "GeminiRenderer", "render_gemini_command", "render_gemini_md",
+    "build_skills_bundle", "check_distribution", "distribution_files",
+    "write_distribution", "render_role_skill", "render_plugin_json",
+    "render_marketplace_json",
 ]
