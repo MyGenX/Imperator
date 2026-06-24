@@ -109,6 +109,14 @@ From a checkout you can also just `pip install -e cli`.
 
 Review the installer behavior in [docs/install-security.md](docs/install-security.md).
 
+Installer flags:
+
+```bash
+./install.sh --dry-run --dir ~/.imperator --no-color --non-interactive
+./install.sh --force
+./install.sh --uninstall
+```
+
 ---
 
 ## Quick Start
@@ -133,6 +141,11 @@ imperator list
 # Regenerate output anytime
 imperator compile                 # native modular tree for the configured agent
 imperator compile --agent all     # modular files for every supported agent
+
+# Check and clean generated files
+imperator doctor
+imperator clean --dry-run
+imperator clean
 
 # Token impact, broken down by tier
 imperator stats

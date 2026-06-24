@@ -2,49 +2,34 @@
 set -e
 
 REPO="${IMPERATOR_REPO:-https://github.com/MyGenX/Imperator}"
-IMPERATOR_DIR="${IMPERATOR_DIR:-$HOME/.imperator}"
+RAW_INSTALLER="${IMPERATOR_INSTALLER_URL:-https://raw.githubusercontent.com/MyGenX/Imperator/main/cli/imperator/installer.py}"
 
-RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
-BLUE='\033[0;34m'; BOLD='\033[1m'; NC='\033[0m'
-
-echo ""
-echo -e "${BOLD}👑 Imperator Installer${NC}"
-echo -e "────────────────────────────────"
-echo ""
-
-check_dep() {
-  if ! command -v "$1" &>/dev/null; then
-    echo -e "${RED}✗ $1 is required but not installed.${NC}"
-    echo -e "  Install it and re-run this script."
-    exit 1
-  fi
-}
-
-echo -e "${BLUE}→ Checking dependencies...${NC}"
-check_dep git
-check_dep python3
-check_dep pip3
-echo -e "${GREEN}✓ All dependencies found${NC}"
-echo ""
-
-if [ -d "$IMPERATOR_DIR/.git" ]; then
-  echo -e "${YELLOW}→ Imperator already installed. Updating...${NC}"
-  git -C "$IMPERATOR_DIR" pull --quiet
-  echo -e "${GREEN}✓ Updated to latest version${NC}"
+if command -v python3 >/dev/null 2>&1; then
+  PYTHON="python3"
+elif command -v python >/dev/null 2>&1; then
+  PYTHON="python"
 else
-  echo -e "${BLUE}→ Cloning Imperator...${NC}"
-  git clone --quiet "$REPO" "$IMPERATOR_DIR"
-  echo -e "${GREEN}✓ Cloned to $IMPERATOR_DIR${NC}"
+  echo "ERROR python3 or python is required." >&2
+  exit 1
 fi
-echo ""
 
-echo -e "${BLUE}→ Installing Python CLI...${NC}"
-pip3 install -e "$IMPERATOR_DIR/cli" --quiet
-echo -e "${GREEN}✓ CLI installed (entry point: imperator)${NC}"
-echo ""
+SCRIPT_DIR=""
+if [ -n "${BASH_SOURCE[0]:-}" ] && [ -f "${BASH_SOURCE[0]}" ]; then
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+fi
 
-echo -e "${BOLD}${GREEN}✓ Imperator installed successfully!${NC}"
-echo ""
-echo -e "  Run ${BOLD}imperator init${NC} in your project to get started"
-echo -e "  Docs: ${BLUE}${REPO}${NC}"
-echo ""
+if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/cli/imperator/installer.py" ]; then
+  "$PYTHON" "$SCRIPT_DIR/cli/imperator/installer.py" "$@"
+  exit $?
+fi
+
+if ! command -v curl >/dev/null 2>&1; then
+  echo "ERROR curl is required for remote installer bootstrap." >&2
+  exit 1
+fi
+
+TMP_INSTALLER="$(mktemp)"
+trap 'rm -f "$TMP_INSTALLER"' EXIT
+
+curl -fsSL "$RAW_INSTALLER" -o "$TMP_INSTALLER"
+IMPERATOR_REPO="$REPO" "$PYTHON" "$TMP_INSTALLER" "$@"

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "imperator-cli"
-version = "0.3.0"
+version = "0.3.1"
 description = "👑 Imperator — Reusable rules for AI coding agents"
 requires-python = ">=3.8"
 license = { text = "MIT" }

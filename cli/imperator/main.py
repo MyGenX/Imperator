@@ -8,7 +8,9 @@ import sys
 
 from . import engine
 from .commands.add import cmd_add
+from .commands.clean import cmd_clean
 from .commands.compile import cmd_compile
+from .commands.doctor import cmd_doctor
 from .commands.init import cmd_init
 from .commands.list import cmd_list
 from .commands.role import cmd_role
@@ -29,6 +31,8 @@ Examples:
   imperator role list                     Show available roles
   imperator list                          Show all domains and roles
   imperator compile                       Regenerate native output from config
+  imperator doctor                        Check install, config, and generated files
+  imperator clean                         Remove Imperator-generated agent files
   imperator stats                         Token impact by tier
         """,
     )
@@ -58,6 +62,12 @@ Examples:
     p_compile.add_argument("--agent", choices=list(engine.AGENTS) + ["all"])
     p_compile.add_argument("--style", choices=engine.STYLES)
 
+    sub.add_parser("doctor", help="Check install, config, and generated files")
+
+    p_clean = sub.add_parser("clean", help="Remove Imperator-generated agent files")
+    p_clean.add_argument("--dry-run", action="store_true",
+                         help="Print files that would be removed")
+
     sub.add_parser("stats", help="Show estimated token impact by tier")
     sub.add_parser("list", help="Show available domains and roles")
 
@@ -77,6 +87,8 @@ def main(argv=None):
         "add": cmd_add,
         "role": cmd_role,
         "compile": cmd_compile,
+        "doctor": cmd_doctor,
+        "clean": cmd_clean,
         "stats": cmd_stats,
         "list": cmd_list,
     }
