@@ -3,11 +3,11 @@
 Imperator organizes rules into three tiers, authored once under `rules/` and compiled
 into each agent's native layout.
 
-| Tier | Source | Compiles to (Claude Code) | Loads |
-|---|---|---|---|
-| **Global** | `rules/global/*.md` | `.claude/rules/global.md` | every session |
-| **Domain** (tech stack) | `rules/domains/*.md` | `.claude/rules/<domain>.md` | only when editing matching files (path-scoped) |
-| **Role** (persona) | `rules/roles/*.md` | `.claude/agents/<role>.md` (subagent) | delegated by task |
+| Tier | Source | Claude Code | Cursor | Codex | Gemini |
+|---|---|---|---|---|---|
+| **Global** | `rules/global/*.md` | `.claude/rules/global.md` | `.cursor/rules/global.mdc` | `AGENTS.md` + `.codex/rules/global.md` | `GEMINI.md` + `.gemini/rules/global.md` |
+| **Domain** | `rules/domains/*.md` | `.claude/rules/<domain>.md` | `.cursor/rules/domains/<domain>.mdc` | `AGENTS.md` + `.codex/rules/domains/<domain>.md` | `GEMINI.md` + `.gemini/rules/domains/<domain>.md` |
+| **Role** | `rules/roles/*.md` | `.claude/agents/<role>.md` | `.cursor/rules/roles/<role>.mdc` | `.codex/rules/roles/<role>.md` + `.codex/agents/<role>.toml` | `.gemini/rules/roles/<role>.md` + `.gemini/commands/roles/<role>.toml` |
 
 ## Global & domain rule files (compact, single source of truth)
 
@@ -47,7 +47,13 @@ Add type hints to function signatures and public APIs.
 | `affects` | Token impact (`output-tokens`, `all-tokens`, `risk-reduction`, ...) |
 | `agents` | Default agents these rules target (a list) |
 | `domain` | (domain files) the domain id, e.g. `python` |
-| `paths` | (domain files) glob list; compiled to Claude Code path-scoped `paths:` frontmatter |
+| `paths` | (domain files) glob list; compiled to Claude Code `paths:` and Cursor `globs` metadata |
+
+Claude Code and Cursor can apply domain rules by path metadata. Codex discovers
+instruction files through `AGENTS.md`, so Codex embeds active global/domain guidance in
+root `AGENTS.md` and also writes reviewable Markdown modules under `.codex/rules/`.
+Do not compile Imperator instruction rules to Codex `.rules` policy files; Codex `.rules`
+is for command approvals. Gemini imports generated Markdown modules from `GEMINI.md`.
 
 ### Overview preamble (optional)
 
@@ -107,8 +113,9 @@ contain bullets, blank lines, and fenced code blocks. The same body format appli
 
 ## Role files (→ subagents)
 
-Each `rules/roles/<role>.md` defines a specialist persona that compiles to a Claude Code
-subagent. Frontmatter configures the subagent; the body is its system prompt.
+Each `rules/roles/<role>.md` defines a specialist persona that compiles to native
+subagent/custom-agent files where the target supports them. Frontmatter configures the
+agent; the body is its system prompt.
 
 ```markdown
 ---
@@ -127,11 +134,11 @@ You are a senior backend developer. Follow the Imperator global rules ...
 |---|---|
 | `role` | subagent `name` (lowercase-hyphen) |
 | `description` | when Claude should delegate to this role |
-| `tools` | comma-separated tool allowlist (omit to inherit all) |
-| `model` | `sonnet` / `opus` / `haiku` / `inherit` / full id |
+| `tools` | comma-separated tool allowlist for Claude Code (Codex custom agents inherit tools from the parent session) |
+| `model` | Claude Code model selector; Codex custom agents inherit the parent model unless Codex-specific model support is added later |
 | `domains` | domains this role cares about |
 
-At compile time a role subagent embeds the persona + the global rules + the
+At compile time a role subagent/custom agent embeds the persona + the global rules + the
 **intersection of its `domains` and the project's selected domains** (`role.domains ∩
 selected`), so the subagent is self-contained.
 
@@ -142,10 +149,8 @@ per-rule YAML frontmatter. Choose with `--style` (stored in `.imperator.json`).
 
 ## Layouts
 
-- `modular` (default for **claude-code**) — the `.claude/` tree above.
-- `flat` — a single file (`CLAUDE.md` / `.cursorrules` / `AGENTS.md` / `GEMINI.md`),
-  global + domains only (no subagents). Used for Cursor/Codex/Gemini and available for
-  Claude Code via `imperator compile --layout flat`.
+Imperator is modular-only. Each supported agent compiles to its native modular surface:
+`.claude/`, `.cursor/rules/`, `AGENTS.md` + `.codex/`, or `GEMINI.md` + `.gemini/`.
 
 ## Compilation pipeline
 
@@ -153,5 +158,5 @@ per-rule YAML frontmatter. Choose with `--style` (stored in `.imperator.json`).
 2. **Load** global (fixed order) + selected domains + selected roles.
 3. **Parse** into `RuleGroup`/`Rule` and `Role` objects.
 4. **Filter** rules that don't target the chosen agent.
-5. **Render** global, each domain (with `paths`), and each role subagent.
-6. **Write** the `.claude/` tree (modular) or a single file (flat).
+5. **Render** global, each domain, and each role for the selected agent.
+6. **Write** the selected agent's native modular files.

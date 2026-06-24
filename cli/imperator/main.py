@@ -28,8 +28,7 @@ Examples:
   imperator role add backend-developer qa-engineer   Add specialist subagents
   imperator role list                     Show available roles
   imperator list                          Show all domains and roles
-  imperator compile                       Regenerate .claude/ from config
-  imperator compile --layout flat         Single-file output instead
+  imperator compile                       Regenerate native output from config
   imperator stats                         Token impact by tier
         """,
     )
@@ -42,7 +41,6 @@ Examples:
     p_init.add_argument("--profile", choices=list(engine.PROFILES))
     p_init.add_argument("--agent", choices=list(engine.AGENTS))
     p_init.add_argument("--style", choices=engine.STYLES)
-    p_init.add_argument("--layout", choices=engine.LAYOUTS)
     p_init.add_argument("--role", dest="roles", action="append", default=None,
                         choices=engine.ROLES_AVAILABLE,
                         help="Add a role (repeatable); skips the interactive role prompt")
@@ -59,7 +57,6 @@ Examples:
     p_compile = sub.add_parser("compile", help="Compile rules into agent files")
     p_compile.add_argument("--agent", choices=list(engine.AGENTS) + ["all"])
     p_compile.add_argument("--style", choices=engine.STYLES)
-    p_compile.add_argument("--layout", choices=engine.LAYOUTS)
 
     sub.add_parser("stats", help="Show estimated token impact by tier")
     sub.add_parser("list", help="Show available domains and roles")

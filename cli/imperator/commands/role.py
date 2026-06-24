@@ -39,11 +39,9 @@ def cmd_role(args):
     config["roles"] = roles
     written = recompile(config)
     save_config(config["agent"], config.get("domains", []), roles,
-                config["style"], config.get("layout", "modular"))
+                config["style"])
 
     print(f"✓ Roles now active: {', '.join(roles) if roles else 'none'}")
-    if config.get("agent") != "claude-code" or config.get("layout") == "flat":
-        print("  Note: roles compile to subagents only for claude-code modular layout.")
     print_written(written)
 
 

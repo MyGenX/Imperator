@@ -14,9 +14,8 @@ def recompile(config: dict, directory: str = ".") -> list[Path]:
     roles = config.get("roles", [])
     style = config.get("style", "compact")
     agent = config.get("agent", "claude-code")
-    layout = config.get("layout", "modular" if agent == "claude-code" else "flat")
     return engine.compile_project(
-        domains, roles, style=style, out_dir=directory, agent=agent, layout=layout,
+        domains, roles, style=style, out_dir=directory, agent=agent,
     )
 
 
@@ -28,27 +27,24 @@ def print_written(paths: list[Path]) -> None:
 def cmd_compile(args):
     config = load_config()
     config.setdefault("style", "compact")
-    config.setdefault("layout", "modular")
     config.setdefault("domains", [])
     config.setdefault("roles", [])
 
     if getattr(args, "style", None):
         config["style"] = args.style
-    if getattr(args, "layout", None):
-        config["layout"] = args.layout
 
     agent = getattr(args, "agent", None) or config.get("agent", "claude-code")
 
     if agent == "all":
-        # Flat single file for every supported agent (legacy multi-agent output).
         style = config.get("style", "compact")
         domains = config.get("domains", [])
+        roles = config.get("roles", [])
         for ag in engine.AGENTS:
-            path = engine.compile_to_agent(domains, ag, style=style)
-            print(f"  ✓ {ag:<12} → {path}  ({style}, flat)")
+            written = engine.compile_project(domains, roles, style=style, agent=ag)
+            print(f"  ✓ {ag:<12} → {len(written)} files  ({style}, modular)")
         return
 
     config["agent"] = agent
     written = recompile(config)
-    print(f"✓ Compiled ({config.get('layout')}, {config.get('style')} style):")
+    print(f"✓ Compiled (modular, {config.get('style')} style):")
     print_written(written)

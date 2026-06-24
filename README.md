@@ -62,9 +62,8 @@ imperator role list
 imperator list
 
 # Regenerate output anytime
-imperator compile                 # .claude/ tree (Claude Code)
-imperator compile --layout flat   # single-file output instead
-imperator compile --agent all     # flat files for every agent
+imperator compile                 # native modular tree for the configured agent
+imperator compile --agent all     # modular files for every supported agent
 
 # Token impact, broken down by tier
 imperator stats
@@ -75,7 +74,9 @@ imperator stats
 ## How It Works
 
 Imperator has **three tiers**, authored once and compiled into the layout your agent
-loads natively. For Claude Code that's a modular `.claude/` tree:
+loads natively.
+
+For Claude Code, modular output is a `.claude/` tree:
 
 ```
 rules/                          .claude/
@@ -88,15 +89,41 @@ rules/                          .claude/
 ```
 
 1. **Global rules** apply to every project — output, investigation, processing, behavior, safety. Always loaded.
-2. **Domain rules** are tech-stack rules (python, typescript, postgres, ...). They are
-   **path-scoped** — they load only when the agent touches matching files, so they cost
-   nothing the rest of the time.
+2. **Domain rules** are tech-stack rules (python, typescript, postgres, ...). Agents
+   with path metadata, like Claude Code and Cursor, scope them to matching files.
 3. **Roles** are specialist personas (backend developer, frontend developer, QA, DevOps,
    business analyst) compiled to native **subagents** the agent delegates to by task.
 4. **Done** — Claude Code loads `.claude/rules/` and `.claude/agents/` automatically.
 
-> Cursor, Codex, and Gemini use the legacy **flat** single-file output (global + domains).
-> Roles (subagents) are Claude Code only for now.
+Cursor uses `.cursor/rules/*.mdc` project rules:
+
+```
+rules/                          .cursor/rules/
+  global/      ──────────────►    global.mdc                  (alwaysApply)
+  domains/     ──────────────►    domains/python.mdc          (globs: **/*.py)
+  roles/       ──────────────►    roles/backend-developer.mdc  (description-gated)
+```
+
+For Codex, modular output uses Codex-native project instructions and custom agents:
+
+```
+rules/                          codex project output
+  global/      ──────────────►    AGENTS.md + .codex/rules/global.md
+    output.md ...
+  domains/     ──────────────►    AGENTS.md + .codex/rules/domains/python.md
+    python.md ...
+  roles/       ──────────────►    .codex/rules/roles/backend-developer.md
+    qa-engineer.md ...            .codex/agents/qa-engineer.toml
+```
+
+Codex loads `AGENTS.md` through its project-instruction discovery. Role files compile
+to generated rule modules and project-scoped Codex custom agents under `.codex/`.
+Codex does not auto-load arbitrary `.codex/rules/*.md` instruction files, so active
+global and domain guidance is embedded in root `AGENTS.md` while the rule modules
+remain reviewable generated artifacts.
+
+Gemini uses root `GEMINI.md`, generated `.gemini/rules/`, and role slash commands
+under `.gemini/commands/roles/`.
 
 Rules are authored once in a compact form (single source of truth). At compile time
 you choose how they are written:
@@ -127,7 +154,7 @@ imperator compile --style full
 
 ## Available Domains (tech stacks)
 
-Each domain is **path-scoped** — it loads only when the agent works on matching files.
+Each domain declares path globs used by agent surfaces that support file-scoped rules.
 
 | Domain | Stack | Path scope |
 |---|---|---|
@@ -174,14 +201,9 @@ imperator init --profile minimal        # core rules only
 | Agent | Output | Layout |
 |---|---|---|
 | Claude Code | `.claude/rules/` + `.claude/agents/` | **modular** (path-scoped rules + role subagents) |
-| Cursor | `.cursorrules` | flat |
-| Codex | `AGENTS.md` | flat |
-| Gemini | `GEMINI.md` | flat |
-
-Compiled examples of the full ruleset live in [`agents/`](agents/) — see
-[`agents/claude-code/.claude/`](agents/claude-code/.claude/) for the modular layout.
-
----
+| Cursor | `.cursor/rules/` | **modular** (project rules + glob-scoped domains) |
+| Codex | `AGENTS.md` + `.codex/rules/` + `.codex/agents/` | **modular** (project instructions + rule modules + custom agents) |
+| Gemini | `GEMINI.md` + `.gemini/rules/` + `.gemini/commands/` | **modular** (context imports + role commands) |
 
 ## Contributing
 
@@ -203,7 +225,9 @@ Every rule needs a unique ID (e.g. `IMP-OUT-001`), a kebab-case name, and a seve
 - [x] Compact **and** full-frontmatter output styles
 - [x] Token savings benchmarks (real-world harness — `benchmarks/`)
 - [x] Modular `.claude/` layout — path-scoped domain rules + role subagents
-- [ ] Modular native layouts for Cursor (`.cursor/rules/*.mdc`), Codex, Gemini
+- [x] Modular Codex layout — `AGENTS.md` + `.codex/rules/` + `.codex/agents/`
+- [x] Modular Cursor layout — `.cursor/rules/*.mdc`
+- [x] Modular Gemini layout — `GEMINI.md` + `.gemini/`
 - [ ] Community rule + role submissions
 - [ ] Website + docs
 

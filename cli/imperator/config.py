@@ -24,18 +24,17 @@ def load_config(directory: str = ".") -> dict:
     config.setdefault("roles", [])
     config.setdefault("agent", "claude-code")
     config.setdefault("style", "compact")
-    config.setdefault("layout", "modular" if config["agent"] == "claude-code" else "flat")
+    config.pop("layout", None)
     return config
 
 
 def save_config(agent: str, domains: list[str], roles: list[str],
-                style: str, layout: str, directory: str = ".") -> Path:
+                style: str, directory: str = ".") -> Path:
     config = {
         "agent": agent,
         "domains": domains,
         "roles": roles,
         "style": style,
-        "layout": layout,
         "version": VERSION,
     }
     path = Path(directory) / CONFIG_FILE

@@ -24,17 +24,14 @@ def cmd_init(args):
 
     agent = getattr(args, "agent", None) or _select_agent()
     style = getattr(args, "style", None) or _select_style()
-    layout = getattr(args, "layout", None) or (
-        "modular" if agent == "claude-code" else "flat"
-    )
 
     config = {"agent": agent, "domains": domains, "roles": roles,
-              "style": style, "layout": layout}
+              "style": style}
     written = recompile(config)
-    save_config(agent, domains, roles, style, layout)
+    save_config(agent, domains, roles, style)
 
     print("\n✓ Imperator setup complete!\n")
-    print(f"  Agent   : {agent}  ({layout} layout, {style} style)")
+    print(f"  Agent   : {agent}  (modular, {style} style)")
     print(f"  Domains : {', '.join(domains) if domains else 'none'}")
     print(f"  Roles   : {', '.join(roles) if roles else 'none'}")
     print("\n  Written:")
@@ -64,7 +61,13 @@ def _select_agent() -> str:
     agents = list(engine.AGENTS)
     print("\nSelect your AI agent:\n")
     for i, agent in enumerate(agents, 1):
-        marker = "  (modular .claude/ layout)" if agent == "claude-code" else ""
+        markers = {
+            "claude-code": "  (modular .claude/ layout)",
+            "cursor": "  (modular .cursor/rules/ layout)",
+            "codex": "  (modular AGENTS.md + .codex/ layout)",
+            "gemini": "  (modular GEMINI.md + .gemini/ layout)",
+        }
+        marker = markers.get(agent, "")
         print(f"  [{i}] {agent}{marker}")
     raw = input("\n  → ").strip()
     if raw.isdigit():

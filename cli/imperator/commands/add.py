@@ -29,7 +29,7 @@ def cmd_add(args):
 
     written = recompile(config)
     save_config(config["agent"], domains, config.get("roles", []),
-                config["style"], config.get("layout", "modular"))
+                config["style"])
 
     print(f"✓ Domains now active: {', '.join(domains) if domains else 'none'}")
     print_written(written)
