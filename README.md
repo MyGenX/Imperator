@@ -22,6 +22,73 @@ AI coding agents are powerful but often:
 **Imperator fixes this** with a standardized, reusable, stack-aware ruleset you
 install once and use everywhere.
 
+Imperator is not a terse-output gimmick; it is a stack-aware rules compiler.
+
+## Why not just CLAUDE.md?
+
+`CLAUDE.md` is useful, but it is one agent's project instruction file. Imperator
+keeps rules in one source tree, then compiles them into the native layout for
+each agent:
+
+- Global behavior rules for every task.
+- Domain rules for Python, TypeScript, Postgres, Docker, and other stacks.
+- Role instructions for specialist subagents.
+- Reviewable generated files your team can commit.
+
+That means the same rule policy can produce `.claude/`, `.cursor/rules/`,
+`AGENTS.md` + `.codex/`, or `GEMINI.md` + `.gemini/` without rewriting the rules
+by hand.
+
+## Before / After
+
+Source rules:
+
+```text
+rules/
+  global/
+    output.md
+    investigation.md
+    processing.md
+    behavior.md
+    safety.md
+  domains/
+    python.md
+    postgres.md
+  roles/
+    backend-developer.md
+    qa-engineer.md
+```
+
+Generated Claude Code output:
+
+```text
+.claude/
+  CLAUDE.md
+  rules/
+    global.md
+    python.md
+    postgres.md
+  agents/
+    backend-developer.md
+    qa-engineer.md
+```
+
+Generated Codex output:
+
+```text
+AGENTS.md
+.codex/
+  rules/
+    global.md
+    domains/python.md
+    domains/postgres.md
+    roles/backend-developer.md
+    roles/qa-engineer.md
+  agents/
+    backend-developer.toml
+    qa-engineer.toml
+```
+
 ---
 
 ## Install
@@ -39,6 +106,8 @@ irm https://raw.githubusercontent.com/MyGenX/Imperator/main/install.ps1 | iex
 **Requirements:** Git + Python 3.8+
 
 From a checkout you can also just `pip install -e cli`.
+
+Review the installer behavior in [docs/install-security.md](docs/install-security.md).
 
 ---
 
@@ -198,12 +267,26 @@ imperator init --profile minimal        # core rules only
 
 ## Supported Agents
 
-| Agent | Output | Layout |
+| Agent | Status | Output |
 |---|---|---|
-| Claude Code | `.claude/rules/` + `.claude/agents/` | **modular** (path-scoped rules + role subagents) |
-| Cursor | `.cursor/rules/` | **modular** (project rules + glob-scoped domains) |
-| Codex | `AGENTS.md` + `.codex/rules/` + `.codex/agents/` | **modular** (project instructions + rule modules + custom agents) |
-| Gemini | `GEMINI.md` + `.gemini/rules/` + `.gemini/commands/` | **modular** (context imports + role commands) |
+| Claude Code | Current | `.claude/CLAUDE.md`, `.claude/rules/`, `.claude/agents/` |
+| Cursor | Current | `.cursor/rules/` |
+| Codex | Current | `AGENTS.md`, `.codex/rules/`, `.codex/agents/` |
+| Gemini | Current | `GEMINI.md`, `.gemini/rules/`, `.gemini/commands/` |
+| Windsurf | Planned | Not generated yet |
+| Cline | Planned | Not generated yet |
+| OpenCode | Planned | Not generated yet |
+| Copilot | Planned | Not generated yet |
+
+See [docs/agent-support.md](docs/agent-support.md) for the generated layout and
+current limitations of each target.
+
+## Alternatives
+
+Imperator is a rules compiler, not a single-agent prompt, output-tone trick, or
+skill registry. See [docs/alternatives.md](docs/alternatives.md) for the baseline
+comparison with Caveman, Vercel Skills, Claude Code plugins, and Vercel
+agent-skills.
 
 ## Contributing
 
