@@ -84,7 +84,7 @@ def _role_with_groups(role_name: str, root: Path, agent: str = "claude-code"):
 # ── Vercel skills bundle (export) ─────────────────────────────────────────────
 
 def build_skills_bundle(out_dir, root: Optional[Path] = None,
-                        style: str = "compact") -> list[Path]:
+                        style: str = "standard") -> list[Path]:
     """Write workflow skills (copied) + role skills (generated) as <name>/SKILL.md."""
     root = Path(root or find_root())
     out_dir = Path(out_dir)
@@ -110,7 +110,7 @@ def build_skills_bundle(out_dir, root: Optional[Path] = None,
 
 # ── Claude plugin + marketplace (committed, sync-checked) ─────────────────────
 
-def distribution_files(repo_root, style: str = "compact") -> dict[Path, str]:
+def distribution_files(repo_root, style: str = "standard") -> dict[Path, str]:
     """Map every committed distribution file -> its expected content.
 
     Covers the repo-root marketplace, the plugin manifest, the plugin's verbatim
@@ -136,7 +136,7 @@ def distribution_files(repo_root, style: str = "compact") -> dict[Path, str]:
     return files
 
 
-def write_distribution(repo_root, style: str = "compact") -> list[Path]:
+def write_distribution(repo_root, style: str = "standard") -> list[Path]:
     """(Re)write all committed distribution files. Returns written paths (sorted)."""
     files = distribution_files(repo_root, style)
     for path, content in files.items():
@@ -145,7 +145,7 @@ def write_distribution(repo_root, style: str = "compact") -> list[Path]:
     return sorted(files)
 
 
-def check_distribution(repo_root, style: str = "compact") -> list[str]:
+def check_distribution(repo_root, style: str = "standard") -> list[str]:
     """Return a list of human-readable drift problems (empty == in sync)."""
     repo_root = Path(repo_root)
     problems: list[str] = []

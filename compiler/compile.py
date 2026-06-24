@@ -24,7 +24,7 @@ from imperator import engine  # noqa: E402
 
 ALL_DOMAINS = list(engine.DOMAINS_AVAILABLE)
 ALL_ROLES = list(engine.ROLES_AVAILABLE)
-STYLE = "compact"
+STYLE = "standard"
 
 
 def smoke_build() -> list[str]:

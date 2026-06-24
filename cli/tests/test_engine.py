@@ -359,16 +359,25 @@ def test_estimate_tokens():
     assert engine.estimate_tokens("a" * 400) == 100
 
 
-def test_multiline_rule_body_preserves_bullets():
+def test_compression_profiles():
+    assert engine.STYLES == ["standard", "compact", "strict"]
+
     group = engine.parse_file(REPO_ROOT / "rules" / "global" / "output.md")
     rule = next(r for r in group.rules if r.name == "no-full-file-rewrite")
-    # the body must keep its bullet list (not collapse to one line)
-    assert "\n- " in rule.body
+    assert "\n- " in rule.body and "```" in rule.body  # authored richness
+
+    head = "## IMP-OUT-002 · no-full-file-rewrite · required"
+
+    standard = engine.render_rule(rule, "standard")
+    assert head in standard
+    assert "\n- " in standard        # bullets kept
+    assert "```" in standard         # fenced example kept
 
     compact = engine.render_rule(rule, "compact")
-    assert "## IMP-OUT-002 · no-full-file-rewrite · required" in compact
-    assert "\n- " in compact
+    assert "\n- " in compact         # bullets kept
+    assert "```" not in compact      # fenced example dropped
 
-    full = engine.render_rule(rule, "full")
-    assert "### no-full-file-rewrite" in full
-    assert "\n- " in full
+    strict = engine.render_rule(rule, "strict")
+    assert "\n- " not in strict      # bullets dropped
+    assert strict.splitlines()[0] == head
+    assert strict.splitlines()[1].startswith("Edit in place")  # directive only

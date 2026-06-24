@@ -41,29 +41,48 @@ def estimate_tokens(text: str) -> int:
 
 # ── Rule rendering ───────────────────────────────────────────────────────────
 
+def _compress_body(body: str, style: str) -> str:
+    """Trim a rule body to the requested compression profile.
+
+    standard: verbatim. compact: drop fenced ```code``` blocks (keep directive +
+    bullets). strict: keep only the first non-empty line (the directive).
+    """
+    if style == "standard" or not body:
+        return body
+
+    lines = body.split("\n")
+
+    if style == "strict":
+        for line in lines:
+            if line.strip():
+                return line.rstrip()
+        return ""
+
+    # compact: strip fenced example blocks
+    out: list[str] = []
+    in_fence = False
+    for line in lines:
+        if line.lstrip().startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        out.append(line)
+    return "\n".join(out).strip("\n")
+
+
 def render_rule(rule: Rule, style: str) -> str:
-    if style == "full":
-        fm = (
-            "---\n"
-            f"id: {rule.id}\n"
-            f"name: {rule.name}\n"
-            f"category: {rule.category}\n"
-            f"affects: {rule.affects}\n"
-            f"severity: {rule.severity}\n"
-            f"agents: [{', '.join(rule.agents)}]\n"
-            "---\n"
-        )
-        return f"{fm}\n### {rule.name}\n\n{rule.body}"
-    return f"## {rule.id} · {rule.name} · {rule.severity}\n{rule.body}"
+    body = _compress_body(rule.body, style)
+    head = f"## {rule.id} · {rule.name} · {rule.severity}"
+    return f"{head}\n{body}" if body else head
 
 
 def rules_block(groups: list[RuleGroup], style: str) -> str:
     sections: list[str] = []
     for g in groups:
         rendered = "\n\n".join(render_rule(r, style) for r in g.rules)
-        header = f"## {g.title}" if style == "full" else f"# {g.title}"
-        parts = [header]
-        if g.overview:
+        parts = [f"# {g.title}"]
+        if g.overview and style != "strict":
             parts.append(g.overview)
         parts.append(rendered)
         sections.append("\n\n".join(parts))

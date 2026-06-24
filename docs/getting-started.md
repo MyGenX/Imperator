@@ -27,7 +27,8 @@ imperator init
 You'll be asked for:
 - **domains** — the tech stacks in your project (python, typescript, postgres, ...),
 - **roles** — specialist subagents to add (backend-developer, qa-engineer, ...),
-- **agent** (Claude Code, Cursor, Codex, Gemini) and **style** (`compact` / `full`).
+- **agent** (Claude Code, Cursor, Codex, Gemini) and a **compression profile**
+  (`standard` / `compact` / `strict`).
 
 For **Claude Code** this writes a modular `.claude/` tree:
 
@@ -65,6 +66,11 @@ glob-scoped, so active domain guidance is embedded in root `AGENTS.md`.
 
 For **Cursor** this writes `.cursor/rules/*.mdc`. For **Gemini** this writes
 `GEMINI.md`, `.gemini/rules/`, and `.gemini/commands/roles/`.
+
+Every compiled project also gets native **slash commands** for its agent —
+`/imperator`, `/imperator-review`, `/imperator-plan`, `/imperator-rules`,
+`/imperator-stats` — written to `.claude/commands/`, `.cursor/commands/`,
+`.gemini/commands/`, or `.codex/prompts/` respectively.
 
 Prefer a one-liner? Use a profile (domain bundle) and `--role`:
 

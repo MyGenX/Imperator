@@ -207,18 +207,32 @@ remain reviewable generated artifacts.
 Gemini uses root `GEMINI.md`, generated `.gemini/rules/`, and role slash commands
 under `.gemini/commands/roles/`.
 
-Rules are authored once in a compact form (single source of truth). At compile time
-you choose how they are written:
+Rules are authored once (single source of truth). At compile time you pick a
+**compression profile** that controls how verbosely each rule is written:
 
-| Style | Looks like | Best for |
+| Profile | Renders | Best for |
 |---|---|---|
-| `compact` (default) | `## IMP-OUT-001 · no-preamble · required` | Lean, human-readable agent files |
-| `full` | per-rule YAML frontmatter (`id`, `category`, `affects`, `severity`, `agents`) | Tooling / machine processing |
+| `standard` (default) | directive + bullets + do/don't examples | Full detail |
+| `compact` | directive + bullets (no examples) | Leaner context |
+| `strict` | directive line only | Minimal footprint |
 
 ```bash
-imperator compile --style compact
-imperator compile --style full
+imperator compile --style standard
+imperator compile --style strict
 ```
+
+## Slash commands
+
+Every compiled project also gets native slash commands for its agent
+(`.claude/commands/`, `.cursor/commands/`, `.gemini/commands/`, `.codex/prompts/`):
+
+| Command | Does |
+|---|---|
+| `/imperator` | Apply Imperator working rules to the current task |
+| `/imperator-review` | Review the diff for scope, minimal-diff, tests, breaking changes |
+| `/imperator-plan` | Produce a small, scoped implementation plan |
+| `/imperator-rules` | Summarize the active rules |
+| `/imperator-stats` | Report active domains, rule count, approx. context cost |
 
 ---
 
@@ -318,7 +332,8 @@ Every rule needs a unique ID (e.g. `IMP-OUT-001`), a kebab-case name, and a seve
 - [x] Claude Code, Cursor, Codex, Gemini outputs
 - [x] `install.sh` + `install.ps1`
 - [x] Python CLI (`init`, `add`, `compile`, `stats`)
-- [x] Compact **and** full-frontmatter output styles
+- [x] Compression profiles (standard / compact / strict)
+- [x] Agent-native slash commands (`/imperator`, `/imperator-review`, ...)
 - [x] Token savings benchmarks (real-world harness — `benchmarks/`)
 - [x] Modular `.claude/` layout — path-scoped domain rules + role subagents
 - [x] Modular Codex layout — `AGENTS.md` + `.codex/rules/` + `.codex/agents/`

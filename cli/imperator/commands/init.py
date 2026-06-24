@@ -78,8 +78,9 @@ def _select_agent() -> str:
 
 
 def _select_style() -> str:
-    print("\nRule output style:\n")
-    print("  [1] compact   (## ID · name · severity — lean)")
-    print("  [2] full      (per-rule YAML frontmatter — verbose, machine-readable)")
+    print("\nCompression profile:\n")
+    print("  [1] standard  (directive + bullets + examples — full detail)")
+    print("  [2] compact   (directive + bullets — no examples)")
+    print("  [3] strict    (directive line only — leanest)")
     raw = input("\n  → ").strip()
-    return "full" if raw == "2" else "compact"
+    return {"2": "compact", "3": "strict"}.get(raw, "standard")

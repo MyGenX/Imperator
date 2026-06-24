@@ -20,10 +20,13 @@ def load_config(directory: str = ".") -> dict:
     # Migrate v0.1 schema.
     if "domains" not in config and "extensions" in config:
         config["domains"] = config.pop("extensions")
+    # The dropped per-rule frontmatter format maps to the richest profile.
+    if config.get("style") == "full":
+        config["style"] = "standard"
     config.setdefault("domains", [])
     config.setdefault("roles", [])
     config.setdefault("agent", "claude-code")
-    config.setdefault("style", "compact")
+    config.setdefault("style", "standard")
     config.pop("layout", None)
     return config
 

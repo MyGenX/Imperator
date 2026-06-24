@@ -8,6 +8,7 @@ from typing import Optional
 from .catalog import AGENTS
 from .loader import filter_by_agent, find_root, load_domains, load_global, load_roles
 from .renderers import RENDERERS, RenderContext
+from .renderers.commands import write_agent_commands
 
 
 def compile_project(domains, roles, style="compact", out_dir=".",
@@ -34,4 +35,6 @@ def compile_project(domains, roles, style="compact", out_dir=".",
         domain_groups=domain_groups,
         style=style,
     )
-    return RENDERERS[agent].compile(ctx)
+    written = RENDERERS[agent].compile(ctx)
+    written += write_agent_commands(agent, ctx.out_dir, root)
+    return written

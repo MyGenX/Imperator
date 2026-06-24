@@ -37,7 +37,11 @@ PROFILES = {
 
 AGENTS = ["claude-code", "cursor", "codex", "gemini"]
 
-STYLES = ["compact", "full"]
+# Compression profiles — how verbosely each rule body is rendered:
+#   standard = directive + bullets + do/don't examples (full authored richness)
+#   compact  = directive + bullets (drop fenced examples)
+#   strict   = directive line only
+STYLES = ["standard", "compact", "strict"]
 
 # Back-compat alias for older callers (benchmarks, external scripts).
 EXTENSIONS_AVAILABLE = DOMAINS_AVAILABLE
