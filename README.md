@@ -147,6 +147,9 @@ imperator doctor
 imperator clean --dry-run
 imperator clean
 
+# Validate rule sources + rule-ID registry (also runs in CI)
+imperator validate
+
 # Token impact, broken down by tier
 imperator stats
 ```
@@ -317,11 +320,15 @@ agent-skills.
 
 ## Contributing
 
-Want to add a rule or extension? See [CONTRIBUTING.md](CONTRIBUTING.md) and
-[docs/rules-spec.md](docs/rules-spec.md).
+Want to add a rule or extension? See [CONTRIBUTING.md](CONTRIBUTING.md), the per-tier
+guides ([rule](docs/rule-authoring.md) · [domain](docs/domain-authoring.md) ·
+[role](docs/role-authoring.md) authoring), copy-paste [templates](docs/templates/), and
+the [rules spec](docs/rules-spec.md). Maintainers: [release](docs/release.md) ·
+[security](docs/security.md).
 
 Every rule needs a unique ID (e.g. `IMP-OUT-001`), a kebab-case name, and a severity
-(`required` / `recommended` / `optional`).
+(`required` / `recommended` / `optional`). Run `imperator validate --write-registry`
+before opening a PR — CI enforces it.
 
 ---
 
@@ -339,7 +346,8 @@ Every rule needs a unique ID (e.g. `IMP-OUT-001`), a kebab-case name, and a seve
 - [x] Modular Codex layout — `AGENTS.md` + `.codex/rules/` + `.codex/agents/`
 - [x] Modular Cursor layout — `.cursor/rules/*.mdc`
 - [x] Modular Gemini layout — `GEMINI.md` + `.gemini/`
-- [ ] Community rule + role submissions
+- [x] Real-world benchmark results (`benchmarks/results.md` — deterministic, reproducible)
+- [x] Community submission workflow (`imperator validate`, rule-ID registry, authoring docs + templates)
 - [ ] Website + docs
 
 ---

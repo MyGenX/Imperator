@@ -190,12 +190,17 @@ def _static_section() -> str:
             engine.load_global() + engine.load_domains(domains), "claude-code"
         )
         n = sum(len(g.rules) for g in groups)
-        for style in ("compact", "full"):
+        for style in ("standard", "compact", "strict"):
             with tempfile.TemporaryDirectory() as tmp:
                 written = engine.compile_project(
                     domains, [], style=style, out_dir=tmp, agent="claude-code",
                 )
-                chars = sum(len(p.read_text(encoding="utf-8")) for p in written)
+                # Always-on context surface only: CLAUDE.md + rules/. Slash commands
+                # and role agents load on demand, not every turn, so they don't count
+                # toward the fixed per-session cost.
+                rule_files = [p for p in written
+                              if "/rules/" in p.as_posix() or p.name == "CLAUDE.md"]
+                chars = sum(len(p.read_text(encoding="utf-8")) for p in rule_files)
             rows.append(
                 f"| `{label}` | {n} | {style} | {chars:,} | "
                 f"~{engine.estimate_tokens('x' * chars):,} |"
@@ -211,6 +216,32 @@ def _static_section() -> str:
     return "\n".join(body)
 
 
+def _caveats_section(meta: dict, cells: dict) -> str:
+    judged = any(c.get("judge") for c in cells.values())
+    lines = [
+        "## What this does and does not measure\n",
+        "**Measured (deterministic, from the run transcript + git diff):** total/output "
+        "tokens, tool calls, bytes read, files changed and lines added/deleted, response "
+        "preamble length, turns, latency, cost, and task correctness (each task's "
+        "`verify.sh`). These are read straight from the agent's `stream-json` usage and the "
+        "post-run diff — no estimation.\n",
+        "**Not measured:**",
+        "- Subjective answer quality" + (
+            " — LLM-as-judge was **not** run for this batch (`--no-judge`)."
+            if not judged else " beyond the judge scores shown above."),
+        "- Behavior on large real-world repositories. Fixtures are small and single-purpose, "
+        "chosen so correctness is checkable; absolute numbers will differ on your codebase.",
+        "- Cross-model generality. Runs use a single pinned agent model "
+        f"(`{meta.get('agent_model', '?')}`); other models may respond to the rules differently.",
+        "- Latency/cost under load or across providers — wall-clock here is single-machine, "
+        "serial, and network-dependent.\n",
+        "Imperator's value is **behavioral and workload-dependent**: the static ruleset is a "
+        "fixed per-session context cost (below), while the savings show up across a whole "
+        "session and vary by task. Read the deltas as directional evidence, not a guarantee.\n",
+    ]
+    return "\n".join(lines)
+
+
 def _provenance(meta: dict) -> str:
     if not meta:
         return ""
@@ -219,9 +250,29 @@ def _provenance(meta: dict) -> str:
         f"- Run: `{meta.get('timestamp', '?')}`\n"
         f"- Claude Code: `{meta.get('claude_version', '?')}`\n"
         f"- Agent model: `{meta.get('agent_model', '?')}`\n"
-        f"- Judge model: `{meta.get('judge_model', '?')}`\n"
+        f"- Judge: {('`' + meta['judge_model'] + '`') if meta.get('judge_model') else 'not run (`--no-judge`)'}\n"
         f"- Reps per cell: {meta.get('reps', '?')}\n"
         f"- Rules content hash: `{meta.get('rules_hash', '?')}`\n"
+    )
+
+
+def _reproduce(raw_dir: Path, meta: dict) -> str:
+    try:
+        rel = raw_dir.relative_to(config.REPO_ROOT).as_posix()
+    except ValueError:
+        rel = raw_dir.as_posix()
+    conditions = ",".join(meta.get("conditions") or ["control", "imperator-compact"])
+    reps = meta.get("reps", 3)
+    judge_flag = "" if meta.get("judge_model") else " --no-judge"
+    return (
+        "## Reproduce\n\n```bash\n"
+        "pip install -e cli\n"
+        f"python benchmarks/harness/run.py --all --conditions {conditions} "
+        f"--reps {reps}{judge_flag}\n"
+        f"python benchmarks/harness/aggregate.py {rel}\n```\n\n"
+        "Agent runs use your Claude Code subscription auth — no `ANTHROPIC_API_KEY` "
+        "required. A key is only needed if you drop `--no-judge` to add LLM-as-judge "
+        "quality scores. See [README.md](README.md) for the dry-run and smoke-run forms."
     )
 
 
@@ -233,12 +284,10 @@ def render_report(raw_dir: Path) -> str:
         "See [methodology.md](../methodology.md) for how these numbers are produced.\n",
         _behavioral_section(cells) if cells else
         "_No behavioral runs found in this directory._\n",
+        _caveats_section(meta, cells),
         _static_section(),
         _provenance(meta),
-        "## Reproduce\n\n```bash\n"
-        "pip install -r benchmarks/requirements.txt\n"
-        "python benchmarks/harness/run.py --all --reps 3\n"
-        f"python benchmarks/harness/aggregate.py {raw_dir}\n```\n",
+        _reproduce(raw_dir, meta),
     ]
     return "\n\n".join(p for p in parts if p)
 

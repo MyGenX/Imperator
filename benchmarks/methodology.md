@@ -12,11 +12,11 @@ N times (agents are stochastic):
 
 | Condition | What's different |
 |---|---|
-| `control` | Vanilla Claude Code — **no** `CLAUDE.md` in the project. |
-| `imperator-compact` | A compiled Imperator `CLAUDE.md` (compact style) is present. |
-| `imperator-full` | Same rules, full per-rule frontmatter style (optional). |
+| `control` | Vanilla Claude Code — **no** Imperator rules in the project. |
+| `imperator-compact` | A compiled Imperator `.claude/` tree (global + path-scoped domains), compact style. |
+| `imperator-full` | Same ruleset, standard (full-richness) style (optional). |
 
-Claude Code auto-loads `CLAUDE.md` from the project root, so the *only* thing that differs
+Claude Code auto-loads the project's `.claude/` rules, so the *only* thing that differs
 between arms is the presence/style of the ruleset. Same prompt, same fixture, same model.
 
 Each run happens in a **fresh throwaway git clone of the task fixture**, so edits are
@@ -52,23 +52,31 @@ judge scores, higher is better. Variance across reps is summarized; one run prov
   and report variance, not single runs.
 - Token counts depend on the pinned model and Claude Code version (recorded in Provenance).
 - LLM-as-judge is directional, not ground truth; pair it with the deterministic metrics.
-- Real runs cost money and need `ANTHROPIC_API_KEY`, so they are **not** in default CI.
-  `run.py --dry-run` validates the whole suite without spending anything.
+- Agent runs use your **Claude Code subscription auth** — no `ANTHROPIC_API_KEY` needed.
+  Only the optional LLM-as-judge step needs a key; `--no-judge` skips it and still produces
+  the full deterministic report. Real runs cost agent usage, so they are **not** in default
+  CI; `run.py --dry-run` validates the whole suite without spending anything.
 
 ## Running it
 
 ```bash
-pip install -r benchmarks/requirements.txt
-export ANTHROPIC_API_KEY=sk-...
+pip install -e cli
 
 # validate configs only (no calls, CI-safe)
 python benchmarks/harness/run.py --dry-run
 
-# one task, one rep, two arms (cheap smoke run)
+# one task, one rep, two arms (cheap smoke run, no key)
 python benchmarks/harness/run.py --task bug-fix-targeted \
-    --conditions control,imperator-compact --reps 1
+    --conditions control,imperator-compact --reps 1 --no-judge
 
-# full suite
-python benchmarks/harness/run.py --all --reps 3
+# full deterministic suite (no key)
+python benchmarks/harness/run.py --all \
+    --conditions control,imperator-compact --reps 3 --no-judge
 python benchmarks/harness/aggregate.py benchmarks/results/raw/<timestamp>
+
+# add blind LLM-as-judge quality scores (needs a key)
+export ANTHROPIC_API_KEY=sk-...
+python benchmarks/harness/run.py --all --reps 3
 ```
+
+See [README.md](README.md) for the same three commands with more context.

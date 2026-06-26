@@ -4,10 +4,13 @@ Thanks for helping command AI agents better!
 
 ## Ways to contribute
 
-- **Add a rule** to an existing global or domain file
-- **Add a domain** for a new tech stack
-- **Add a role** (specialist subagent)
+- **Add a rule** to an existing global or domain file — see [docs/rule-authoring.md](docs/rule-authoring.md)
+- **Add a domain** for a new tech stack — see [docs/domain-authoring.md](docs/domain-authoring.md)
+- **Add a role** (specialist subagent) — see [docs/role-authoring.md](docs/role-authoring.md)
+- **Add an agent renderer** — see [docs/templates/agent-renderer-checklist.md](docs/templates/agent-renderer-checklist.md)
 - **Improve docs** or the CLI
+
+Copy-paste starting points live in [docs/templates/](docs/templates/).
 
 ## Adding a rule
 
@@ -35,7 +38,7 @@ Requirements for every rule:
 
 1. Create `rules/domains/<name>.md` with file frontmatter (`category: domain`,
    `domain: <name>`, `affects`, `paths: [...]` globs, `agents`).
-2. Add `<name>` to `DOMAINS_AVAILABLE` in `cli/imperator/engine.py`.
+2. Add `<name>` to `DOMAINS_AVAILABLE` in `cli/imperator/catalog.py`.
 3. If it belongs in a profile, update `PROFILES` in the same file.
 4. Regenerate examples: `python compiler/compile.py`.
 
@@ -43,18 +46,20 @@ Requirements for every rule:
 
 1. Create `rules/roles/<name>.md` with frontmatter (`role`, `description`, `tools`,
    `model`, `domains: [...]`) and a system-prompt body.
-2. Add `<name>` to `ROLES_AVAILABLE` in `cli/imperator/engine.py`.
+2. Add `<name>` to `ROLES_AVAILABLE` in `cli/imperator/catalog.py`.
 3. Regenerate examples: `python compiler/compile.py`.
 
 ## Before opening a PR
 
 ```bash
 pip install -e cli
+imperator validate --write-registry   # checks IDs/headings/frontmatter; updates registry
 pytest cli/tests
-python compiler/compile.py --check   # committed agents/ outputs must be current
+python compiler/compile.py --check     # committed plugin/marketplace must be current
 ```
 
-If `--check` fails, run `python compiler/compile.py` and commit the regenerated files.
+Commit the updated `rules/registry.json` along with your rule change. If `--check` fails,
+run `python compiler/compile.py` and commit the regenerated files. CI runs the same gates.
 
 ## Rule philosophy
 

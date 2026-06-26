@@ -25,6 +25,9 @@ jobs:
       - name: Run tests
         run: pytest cli/tests -q
 
+      - name: Validate rule sources and ID registry
+        run: imperator validate
+
       - name: Verify agents build and plugin/marketplace are in sync
         run: python compiler/compile.py --check
 

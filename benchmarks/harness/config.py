@@ -18,7 +18,8 @@ CLI_DIR = REPO_ROOT / "cli"                                  # cli/ (the package
 TASKS_DIR = BENCHMARKS_DIR / "tasks"
 RESULTS_DIR = BENCHMARKS_DIR / "results"
 RAW_DIR = RESULTS_DIR / "raw"
-REPORT_PATH = RESULTS_DIR / "results.md"
+# Canonical published report lives at benchmarks/results.md; raw artifacts under results/raw/.
+REPORT_PATH = BENCHMARKS_DIR / "results.md"
 
 # Make the installable engine importable without installing it.
 if str(CLI_DIR) not in sys.path:
@@ -40,9 +41,9 @@ DEFAULT_AGENT_TIMEOUT = 600      # seconds per single agent run
 
 @dataclass(frozen=True)
 class Condition:
-    """One arm of the A/B. `style=None` means no CLAUDE.md is written (control)."""
+    """One arm of the A/B. `style=None` means no ruleset is written (control)."""
     name: str
-    style: str | None        # "compact", "full", or None for control
+    style: str | None        # "standard"/"compact"/"strict", or None for control
     description: str
 
     @property
@@ -60,8 +61,8 @@ CONDITIONS: dict[str, Condition] = {
         "Compiled Imperator ruleset, compact style.",
     ),
     "imperator-full": Condition(
-        "imperator-full", "full",
-        "Compiled Imperator ruleset, full per-rule frontmatter style.",
+        "imperator-full", "standard",
+        "Compiled Imperator ruleset, standard (full-richness) style.",
     ),
 }
 

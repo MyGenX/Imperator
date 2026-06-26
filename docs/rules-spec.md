@@ -142,10 +142,16 @@ At compile time a role subagent/custom agent embeds the persona + the global rul
 **intersection of its `domains` and the project's selected domains** (`role.domains ∩
 selected`), so the subagent is self-contained.
 
-## Output styles
+## Compression profiles
 
-`compact` (default) renders `## IMP-OUT-001 · no-preamble · required`; `full` renders
-per-rule YAML frontmatter. Choose with `--style` (stored in `.imperator.json`).
+A rule is authored once; `--style` (stored in `.imperator.json`) controls how verbosely
+each body is rendered:
+
+| Profile | Renders | 
+|---|---|
+| `standard` (default) | directive + bullets + do/don't examples |
+| `compact` | directive + bullets (drops fenced examples) |
+| `strict` | directive line only |
 
 ## Layouts
 

@@ -16,6 +16,7 @@ from .commands.init import cmd_init
 from .commands.list import cmd_list
 from .commands.role import cmd_role
 from .commands.stats import cmd_stats
+from .commands.validate import cmd_validate
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -35,6 +36,7 @@ Examples:
   imperator doctor                        Check install, config, and generated files
   imperator clean                         Remove Imperator-generated agent files
   imperator export --format skills        Emit installable skill bundles
+  imperator validate                      Check rule sources + ID registry
   imperator stats                         Token impact by tier
         """,
     )
@@ -77,6 +79,13 @@ Examples:
     p_export.add_argument("--format", choices=["skills"], default="skills")
     p_export.add_argument("--out", help="Output directory (default: dist/skills)")
 
+    p_validate = sub.add_parser("validate",
+                                help="Validate rule sources and the rule-ID registry")
+    p_validate.add_argument("--write-registry", action="store_true",
+                            help="Regenerate rules/registry.json from current rules")
+    p_validate.add_argument("--no-registry-check", action="store_true",
+                            help="Skip the registry-in-sync check")
+
     return parser
 
 
@@ -98,6 +107,7 @@ def main(argv=None):
         "stats": cmd_stats,
         "list": cmd_list,
         "export": cmd_export,
+        "validate": cmd_validate,
     }
     commands[args.command](args)
 

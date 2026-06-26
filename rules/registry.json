@@ -1,0 +1,683 @@
+{
+  "count": 113,
+  "rules": [
+    {
+      "id": "IMP-API-001",
+      "name": "noun-resources",
+      "severity": "required",
+      "source": "domain/api-rest"
+    },
+    {
+      "id": "IMP-API-002",
+      "name": "correct-http-methods",
+      "severity": "required",
+      "source": "domain/api-rest"
+    },
+    {
+      "id": "IMP-API-003",
+      "name": "meaningful-status-codes",
+      "severity": "required",
+      "source": "domain/api-rest"
+    },
+    {
+      "id": "IMP-API-004",
+      "name": "consistent-error-shape",
+      "severity": "required",
+      "source": "domain/api-rest"
+    },
+    {
+      "id": "IMP-API-005",
+      "name": "validate-input",
+      "severity": "required",
+      "source": "domain/api-rest"
+    },
+    {
+      "id": "IMP-API-006",
+      "name": "paginate-collections",
+      "severity": "required",
+      "source": "domain/api-rest"
+    },
+    {
+      "id": "IMP-API-007",
+      "name": "version-the-api",
+      "severity": "recommended",
+      "source": "domain/api-rest"
+    },
+    {
+      "id": "IMP-API-008",
+      "name": "authn-authz",
+      "severity": "required",
+      "source": "domain/api-rest"
+    },
+    {
+      "id": "IMP-API-009",
+      "name": "idempotent-writes",
+      "severity": "recommended",
+      "source": "domain/api-rest"
+    },
+    {
+      "id": "IMP-API-010",
+      "name": "filtering-sorting",
+      "severity": "recommended",
+      "source": "domain/api-rest"
+    },
+    {
+      "id": "IMP-API-011",
+      "name": "no-internal-leak",
+      "severity": "required",
+      "source": "domain/api-rest"
+    },
+    {
+      "id": "IMP-DOC-001",
+      "name": "pin-base-images",
+      "severity": "required",
+      "source": "domain/docker"
+    },
+    {
+      "id": "IMP-DOC-002",
+      "name": "multi-stage-builds",
+      "severity": "recommended",
+      "source": "domain/docker"
+    },
+    {
+      "id": "IMP-DOC-003",
+      "name": "non-root-user",
+      "severity": "required",
+      "source": "domain/docker"
+    },
+    {
+      "id": "IMP-DOC-004",
+      "name": "no-secrets-in-image",
+      "severity": "required",
+      "source": "domain/docker"
+    },
+    {
+      "id": "IMP-DOC-005",
+      "name": "layer-cache-order",
+      "severity": "recommended",
+      "source": "domain/docker"
+    },
+    {
+      "id": "IMP-DOC-006",
+      "name": "dockerignore",
+      "severity": "recommended",
+      "source": "domain/docker"
+    },
+    {
+      "id": "IMP-DOC-007",
+      "name": "healthcheck",
+      "severity": "recommended",
+      "source": "domain/docker"
+    },
+    {
+      "id": "IMP-DOC-008",
+      "name": "minimal-base",
+      "severity": "recommended",
+      "source": "domain/docker"
+    },
+    {
+      "id": "IMP-DOC-009",
+      "name": "explicit-ports-volumes",
+      "severity": "recommended",
+      "source": "domain/docker"
+    },
+    {
+      "id": "IMP-FAS-001",
+      "name": "pydantic-models",
+      "severity": "required",
+      "source": "domain/fastapi"
+    },
+    {
+      "id": "IMP-FAS-002",
+      "name": "async-routes",
+      "severity": "recommended",
+      "source": "domain/fastapi"
+    },
+    {
+      "id": "IMP-FAS-003",
+      "name": "dependency-injection",
+      "severity": "recommended",
+      "source": "domain/fastapi"
+    },
+    {
+      "id": "IMP-FAS-004",
+      "name": "explicit-status-codes",
+      "severity": "required",
+      "source": "domain/fastapi"
+    },
+    {
+      "id": "IMP-FAS-005",
+      "name": "response-model",
+      "severity": "recommended",
+      "source": "domain/fastapi"
+    },
+    {
+      "id": "IMP-FAS-006",
+      "name": "no-secrets-in-routes",
+      "severity": "required",
+      "source": "domain/fastapi"
+    },
+    {
+      "id": "IMP-FAS-007",
+      "name": "lifespan-resources",
+      "severity": "recommended",
+      "source": "domain/fastapi"
+    },
+    {
+      "id": "IMP-FAS-008",
+      "name": "thin-routes-service-layer",
+      "severity": "recommended",
+      "source": "domain/fastapi"
+    },
+    {
+      "id": "IMP-FAS-009",
+      "name": "background-tasks",
+      "severity": "recommended",
+      "source": "domain/fastapi"
+    },
+    {
+      "id": "IMP-FAS-010",
+      "name": "paginate-list-endpoints",
+      "severity": "required",
+      "source": "domain/fastapi"
+    },
+    {
+      "id": "IMP-NXT-001",
+      "name": "app-router-only",
+      "severity": "required",
+      "source": "domain/nextjs"
+    },
+    {
+      "id": "IMP-NXT-002",
+      "name": "server-first",
+      "severity": "required",
+      "source": "domain/nextjs"
+    },
+    {
+      "id": "IMP-NXT-003",
+      "name": "no-useeffect-fetch",
+      "severity": "required",
+      "source": "domain/nextjs"
+    },
+    {
+      "id": "IMP-NXT-004",
+      "name": "handle-loading-error",
+      "severity": "recommended",
+      "source": "domain/nextjs"
+    },
+    {
+      "id": "IMP-NXT-005",
+      "name": "server-actions-mutations",
+      "severity": "recommended",
+      "source": "domain/nextjs"
+    },
+    {
+      "id": "IMP-NXT-006",
+      "name": "metadata-api",
+      "severity": "recommended",
+      "source": "domain/nextjs"
+    },
+    {
+      "id": "IMP-NXT-007",
+      "name": "explicit-caching",
+      "severity": "required",
+      "source": "domain/nextjs"
+    },
+    {
+      "id": "IMP-NXT-008",
+      "name": "route-handlers-for-apis",
+      "severity": "recommended",
+      "source": "domain/nextjs"
+    },
+    {
+      "id": "IMP-NXT-009",
+      "name": "env-server-only",
+      "severity": "required",
+      "source": "domain/nextjs"
+    },
+    {
+      "id": "IMP-NXT-010",
+      "name": "next-image-font",
+      "severity": "recommended",
+      "source": "domain/nextjs"
+    },
+    {
+      "id": "IMP-PG-001",
+      "name": "parameterized-queries",
+      "severity": "required",
+      "source": "domain/postgres"
+    },
+    {
+      "id": "IMP-PG-002",
+      "name": "migrations-only",
+      "severity": "required",
+      "source": "domain/postgres"
+    },
+    {
+      "id": "IMP-PG-003",
+      "name": "index-hot-columns",
+      "severity": "recommended",
+      "source": "domain/postgres"
+    },
+    {
+      "id": "IMP-PG-004",
+      "name": "transactions-for-multistep",
+      "severity": "required",
+      "source": "domain/postgres"
+    },
+    {
+      "id": "IMP-PG-005",
+      "name": "no-select-star",
+      "severity": "recommended",
+      "source": "domain/postgres"
+    },
+    {
+      "id": "IMP-PG-006",
+      "name": "avoid-n-plus-one",
+      "severity": "required",
+      "source": "domain/postgres"
+    },
+    {
+      "id": "IMP-PG-007",
+      "name": "enforce-constraints",
+      "severity": "required",
+      "source": "domain/postgres"
+    },
+    {
+      "id": "IMP-PG-008",
+      "name": "connection-pooling",
+      "severity": "required",
+      "source": "domain/postgres"
+    },
+    {
+      "id": "IMP-PG-009",
+      "name": "explain-slow-queries",
+      "severity": "recommended",
+      "source": "domain/postgres"
+    },
+    {
+      "id": "IMP-PG-010",
+      "name": "safe-migrations",
+      "severity": "recommended",
+      "source": "domain/postgres"
+    },
+    {
+      "id": "IMP-PY-001",
+      "name": "type-hints",
+      "severity": "required",
+      "source": "domain/python"
+    },
+    {
+      "id": "IMP-PY-002",
+      "name": "follow-formatter",
+      "severity": "required",
+      "source": "domain/python"
+    },
+    {
+      "id": "IMP-PY-003",
+      "name": "no-bare-except",
+      "severity": "required",
+      "source": "domain/python"
+    },
+    {
+      "id": "IMP-PY-004",
+      "name": "pathlib-over-os",
+      "severity": "recommended",
+      "source": "domain/python"
+    },
+    {
+      "id": "IMP-PY-005",
+      "name": "f-strings",
+      "severity": "recommended",
+      "source": "domain/python"
+    },
+    {
+      "id": "IMP-PY-006",
+      "name": "context-managers",
+      "severity": "required",
+      "source": "domain/python"
+    },
+    {
+      "id": "IMP-PY-007",
+      "name": "no-mutable-default-args",
+      "severity": "required",
+      "source": "domain/python"
+    },
+    {
+      "id": "IMP-PY-008",
+      "name": "structured-data-types",
+      "severity": "recommended",
+      "source": "domain/python"
+    },
+    {
+      "id": "IMP-PY-009",
+      "name": "logging-not-print",
+      "severity": "recommended",
+      "source": "domain/python"
+    },
+    {
+      "id": "IMP-PY-010",
+      "name": "docstrings-public-api",
+      "severity": "recommended",
+      "source": "domain/python"
+    },
+    {
+      "id": "IMP-PY-011",
+      "name": "comprehensions-over-loops",
+      "severity": "optional",
+      "source": "domain/python"
+    },
+    {
+      "id": "IMP-RCT-001",
+      "name": "function-components-only",
+      "severity": "required",
+      "source": "domain/react"
+    },
+    {
+      "id": "IMP-RCT-002",
+      "name": "rules-of-hooks",
+      "severity": "required",
+      "source": "domain/react"
+    },
+    {
+      "id": "IMP-RCT-003",
+      "name": "stable-keys",
+      "severity": "required",
+      "source": "domain/react"
+    },
+    {
+      "id": "IMP-RCT-004",
+      "name": "no-premature-memo",
+      "severity": "recommended",
+      "source": "domain/react"
+    },
+    {
+      "id": "IMP-RCT-005",
+      "name": "lift-state-minimally",
+      "severity": "recommended",
+      "source": "domain/react"
+    },
+    {
+      "id": "IMP-RCT-006",
+      "name": "derive-dont-store",
+      "severity": "recommended",
+      "source": "domain/react"
+    },
+    {
+      "id": "IMP-RCT-007",
+      "name": "effect-cleanup",
+      "severity": "required",
+      "source": "domain/react"
+    },
+    {
+      "id": "IMP-RCT-008",
+      "name": "effects-for-external-only",
+      "severity": "recommended",
+      "source": "domain/react"
+    },
+    {
+      "id": "IMP-RCT-009",
+      "name": "controlled-inputs",
+      "severity": "recommended",
+      "source": "domain/react"
+    },
+    {
+      "id": "IMP-RCT-010",
+      "name": "error-boundaries",
+      "severity": "recommended",
+      "source": "domain/react"
+    },
+    {
+      "id": "IMP-TS-001",
+      "name": "no-any",
+      "severity": "required",
+      "source": "domain/typescript"
+    },
+    {
+      "id": "IMP-TS-002",
+      "name": "strict-mode",
+      "severity": "required",
+      "source": "domain/typescript"
+    },
+    {
+      "id": "IMP-TS-003",
+      "name": "discriminated-unions",
+      "severity": "recommended",
+      "source": "domain/typescript"
+    },
+    {
+      "id": "IMP-TS-004",
+      "name": "no-non-null-assertion",
+      "severity": "recommended",
+      "source": "domain/typescript"
+    },
+    {
+      "id": "IMP-TS-005",
+      "name": "infer-dont-annotate",
+      "severity": "recommended",
+      "source": "domain/typescript"
+    },
+    {
+      "id": "IMP-TS-006",
+      "name": "no-ts-ignore",
+      "severity": "required",
+      "source": "domain/typescript"
+    },
+    {
+      "id": "IMP-TS-007",
+      "name": "type-over-enum",
+      "severity": "recommended",
+      "source": "domain/typescript"
+    },
+    {
+      "id": "IMP-TS-008",
+      "name": "readonly-immutability",
+      "severity": "recommended",
+      "source": "domain/typescript"
+    },
+    {
+      "id": "IMP-TS-009",
+      "name": "no-floating-promises",
+      "severity": "required",
+      "source": "domain/typescript"
+    },
+    {
+      "id": "IMP-BEH-001",
+      "name": "do-what-is-asked",
+      "severity": "required",
+      "source": "global/behavior"
+    },
+    {
+      "id": "IMP-BEH-002",
+      "name": "verify-before-claiming-done",
+      "severity": "required",
+      "source": "global/behavior"
+    },
+    {
+      "id": "IMP-BEH-003",
+      "name": "admit-uncertainty",
+      "severity": "required",
+      "source": "global/behavior"
+    },
+    {
+      "id": "IMP-BEH-004",
+      "name": "use-existing-utilities",
+      "severity": "recommended",
+      "source": "global/behavior"
+    },
+    {
+      "id": "IMP-BEH-005",
+      "name": "match-code-style",
+      "severity": "required",
+      "source": "global/behavior"
+    },
+    {
+      "id": "IMP-BEH-006",
+      "name": "minimal-diff",
+      "severity": "recommended",
+      "source": "global/behavior"
+    },
+    {
+      "id": "IMP-INV-001",
+      "name": "no-full-codebase-scan",
+      "severity": "required",
+      "source": "global/investigation"
+    },
+    {
+      "id": "IMP-INV-002",
+      "name": "no-repeat-file-read",
+      "severity": "required",
+      "source": "global/investigation"
+    },
+    {
+      "id": "IMP-INV-003",
+      "name": "ask-before-explore",
+      "severity": "recommended",
+      "source": "global/investigation"
+    },
+    {
+      "id": "IMP-INV-004",
+      "name": "targeted-search",
+      "severity": "required",
+      "source": "global/investigation"
+    },
+    {
+      "id": "IMP-INV-005",
+      "name": "stop-when-found",
+      "severity": "recommended",
+      "source": "global/investigation"
+    },
+    {
+      "id": "IMP-INV-006",
+      "name": "reuse-known-context",
+      "severity": "required",
+      "source": "global/investigation"
+    },
+    {
+      "id": "IMP-OUT-001",
+      "name": "no-preamble",
+      "severity": "required",
+      "source": "global/output"
+    },
+    {
+      "id": "IMP-OUT-002",
+      "name": "no-full-file-rewrite",
+      "severity": "required",
+      "source": "global/output"
+    },
+    {
+      "id": "IMP-OUT-003",
+      "name": "no-unsolicited-summary",
+      "severity": "recommended",
+      "source": "global/output"
+    },
+    {
+      "id": "IMP-OUT-004",
+      "name": "no-redundant-comments",
+      "severity": "recommended",
+      "source": "global/output"
+    },
+    {
+      "id": "IMP-OUT-005",
+      "name": "concise-explanations",
+      "severity": "recommended",
+      "source": "global/output"
+    },
+    {
+      "id": "IMP-OUT-006",
+      "name": "answer-then-detail",
+      "severity": "recommended",
+      "source": "global/output"
+    },
+    {
+      "id": "IMP-OUT-007",
+      "name": "no-apology-loops",
+      "severity": "recommended",
+      "source": "global/output"
+    },
+    {
+      "id": "IMP-OUT-008",
+      "name": "match-requested-detail",
+      "severity": "recommended",
+      "source": "global/output"
+    },
+    {
+      "id": "IMP-PRO-001",
+      "name": "clarify-before-build",
+      "severity": "required",
+      "source": "global/processing"
+    },
+    {
+      "id": "IMP-PRO-002",
+      "name": "no-scope-creep",
+      "severity": "required",
+      "source": "global/processing"
+    },
+    {
+      "id": "IMP-PRO-003",
+      "name": "small-steps",
+      "severity": "recommended",
+      "source": "global/processing"
+    },
+    {
+      "id": "IMP-PRO-004",
+      "name": "flag-breaking-changes",
+      "severity": "required",
+      "source": "global/processing"
+    },
+    {
+      "id": "IMP-PRO-005",
+      "name": "prefer-existing-patterns",
+      "severity": "required",
+      "source": "global/processing"
+    },
+    {
+      "id": "IMP-PRO-006",
+      "name": "no-speculative-abstraction",
+      "severity": "recommended",
+      "source": "global/processing"
+    },
+    {
+      "id": "IMP-SAF-001",
+      "name": "no-delete-without-confirm",
+      "severity": "required",
+      "source": "global/safety"
+    },
+    {
+      "id": "IMP-SAF-002",
+      "name": "no-env-modification",
+      "severity": "required",
+      "source": "global/safety"
+    },
+    {
+      "id": "IMP-SAF-003",
+      "name": "no-auto-commit",
+      "severity": "required",
+      "source": "global/safety"
+    },
+    {
+      "id": "IMP-SAF-004",
+      "name": "no-dependency-install",
+      "severity": "recommended",
+      "source": "global/safety"
+    },
+    {
+      "id": "IMP-SAF-005",
+      "name": "warn-auth-changes",
+      "severity": "required",
+      "source": "global/safety"
+    },
+    {
+      "id": "IMP-SAF-006",
+      "name": "no-destructive-commands",
+      "severity": "required",
+      "source": "global/safety"
+    },
+    {
+      "id": "IMP-SAF-007",
+      "name": "no-secret-exposure",
+      "severity": "required",
+      "source": "global/safety"
+    }
+  ]
+}

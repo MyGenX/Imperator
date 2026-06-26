@@ -19,3 +19,4 @@ venv/
 
 # Generated agent outputs; source of truth is rules/ + CLI templates.
 /agents/
+benchmarks/results
