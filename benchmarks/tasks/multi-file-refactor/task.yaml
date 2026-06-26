@@ -1,0 +1,15 @@
+description: >-
+  A small multi-file, behavior-preserving refactor: dedupe a rounding helper across
+  two modules. Larger than the single-file tasks so verification overhead is not
+  disproportionate to the change.
+extensions: [python]
+expects_edits: true
+prompt: >-
+  The cents-rounding expression `int(x * 100 + 0.5) / 100` is duplicated in
+  discounts.py (apply_discount) and invoices.py (line_total). Extract it into a single
+  helper `round_cents(value)` in a new module money.py, and use that helper in both
+  places. Keep all behavior exactly the same.
+rubric: >-
+  The change should add money.round_cents and replace the two duplicated expressions
+  with calls to it — nothing more. Penalize touching unrelated functions, changing
+  public behavior, rewriting either file wholesale, or adding speculative helpers.

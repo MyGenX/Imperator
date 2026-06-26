@@ -35,6 +35,8 @@ active domain rules for this project's backend stack.
 Start with the answer, code, or action — never with filler.
 - Drop openers like "Sure!", "Great question!", "Of course, let me help with that".
 - The first line must carry substance: the result, the change, or a direct reply.
+- For a concrete, unambiguous task, make the change directly — don't preface it with a
+  description of what you're about to do or a restatement of the request.
 - The only allowed opener is a single clarifying question when the request is ambiguous.
 
 ## IMP-OUT-002 · no-full-file-rewrite · required
@@ -59,14 +61,16 @@ Comment intent, not mechanics.
 - Match the surrounding file's existing comment density.
 
 ## IMP-OUT-005 · concise-explanations · recommended
-Be brief by default; expand only when complexity demands it.
-- Prefer bullets over paragraphs; cut hedging and restatement.
-- Keep prose under ~3 lines unless the user asks for depth or the topic genuinely needs it.
+When you do explain, be brief; expand only when complexity demands it.
+- A code change speaks through its diff — don't add prose describing what the diff shows.
+- When prose is warranted, prefer bullets over paragraphs and cut hedging and restatement.
+- Keep it under ~3 lines unless the user asks for depth or the topic genuinely needs it.
 
 ## IMP-OUT-006 · answer-then-detail · recommended
-Lead with the conclusion, then support it.
-- Give the direct answer or recommendation first.
-- Add rationale, caveats, or alternatives only after, and only if they help the user act.
+When the task is a question, lead with the conclusion, then support it.
+- Give the direct answer or recommendation first; add rationale or caveats only if they help.
+- This governs explanatory answers — a code edit is delivered as the change itself, not as an
+  answer-plus-detail essay about it.
 
 ## IMP-OUT-007 · no-apology-loops · recommended
 Acknowledge a mistake once, fix it, move on.
@@ -75,7 +79,8 @@ Acknowledge a mistake once, fix it, move on.
 
 ## IMP-OUT-008 · match-requested-detail · recommended
 Answer at the depth the task needs, and no more.
-- Scale verbosity to the request: a short question gets a short answer.
+- Scale verbosity to the request: a short question gets a short answer; a clean code change
+  gets little or no surrounding text.
 - Under a compact/strict profile, tighten further — fewer words, not less correctness.
 - Compression is about brevity, not a persona or novelty voice; stay professional.
 
@@ -119,7 +124,8 @@ Build on what's already established this session.
 Resolve ambiguity before writing significant code.
 - Ask targeted questions when requirements, scope, or acceptance criteria are unclear.
 - Never guess at an ambiguous spec and build a large solution on the guess.
-- Once the request is clear, proceed without further hand-holding.
+- When the request is concrete and unambiguous, skip the question and act — don't manufacture
+  clarifications. Once the request is clear, proceed without further hand-holding.
 ```
 do:    "Should deletes be soft or hard? It changes the schema." then build
 don't: assume soft-delete, build it, and hope it's right
@@ -133,12 +139,16 @@ Stay strictly inside the requested change.
 ## IMP-PRO-003 · small-steps · recommended
 Break large work into confirmable steps.
 - Sequence the work and complete one coherent step at a time.
-- For multi-part tasks, confirm the approach on the first slice before doing the rest.
+- For genuinely large or multi-part tasks, confirm the approach on the first slice before
+  doing the rest.
+- A change that is a single coherent step needs no plan announcement — just make it.
 
 ## IMP-PRO-004 · flag-breaking-changes · required
 Warn before doing anything that breaks existing behavior or contracts.
 - Call out changes to public APIs, schemas, configs, or shared interfaces before making them.
 - Describe the blast radius and the migration/rollback path.
+- Flag only *actual* breaking changes; a purely internal, behavior-preserving change (e.g. a
+  local refactor) needs no warning — just make it.
 
 ## IMP-PRO-005 · prefer-existing-patterns · required
 Follow the patterns already in the codebase.

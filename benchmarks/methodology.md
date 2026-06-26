@@ -74,6 +74,9 @@ python benchmarks/harness/run.py --all \
     --conditions control,imperator-compact --reps 3 --no-judge
 python benchmarks/harness/aggregate.py benchmarks/results/raw/<timestamp>
 
+# optional: fail if any task busts its token budget (benchmarks/budgets.yaml)
+python benchmarks/harness/budget.py benchmarks/results/raw/<timestamp>
+
 # add blind LLM-as-judge quality scores (needs a key)
 export ANTHROPIC_API_KEY=sk-...
 python benchmarks/harness/run.py --all --reps 3

@@ -49,6 +49,17 @@ python benchmarks/harness/aggregate.py benchmarks/results/raw/<timestamp>
 Add `imperator-full` to `--conditions` for a third arm, or drop `--no-judge` (and set
 `ANTHROPIC_API_KEY`) to add blind LLM-as-judge quality scores.
 
+**Cost-regression gate (optional, after a full run):** check the fresh deltas against the
+ceilings in [`budgets.yaml`](budgets.yaml) so a rule change can't silently re-inflate query
+cost. Exits non-zero on a breach.
+
+```bash
+python benchmarks/harness/budget.py benchmarks/results/raw/<timestamp>
+```
+
+Like the suite, this needs real runs, so it is **not** in default CI — `--dry-run` stays the
+CI-safe check.
+
 ## Conditions
 
 | Condition | What the fixture gets |
