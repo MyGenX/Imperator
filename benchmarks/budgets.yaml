@@ -1,0 +1,58 @@
+# Token-cost regression gates for the benchmark.
+#
+# Deltas are the treatment condition relative to `control`, in percent
+# (negative = treatment used fewer tokens, the goal). budget.py loads a raw
+# results dir, recomputes the deltas, and exits non-zero if any ceiling is
+# breached — so a rule change can't silently re-inflate query cost.
+#
+# This is a *regression gate*, not an aspirational target. Honest finding from
+# run 20260626T101200Z: with the discipline rules deliberately preserved,
+# Imperator currently costs MORE total tokens on concrete edit tasks (the cost
+# is structural — extra verify/read turns — not preamble, which the rules did
+# cut). The ceilings below are therefore set to each task's *measured* delta in
+# that run plus headroom for a stochastic agent (≈30pp for total/output, ≈60pp
+# for the noisy, low-absolute preamble metric). They lock in the current numbers
+# as the line not to cross; tighten them whenever the rules genuinely improve.
+#
+# A `null` threshold disables that check for a task; a per-task value overrides
+# the default. Run: python benchmarks/harness/budget.py <results/raw/dir>
+
+treatment: imperator-compact
+
+defaults:
+  max_total_pct: 120     # overridden per task below; generous catch-all
+  max_output_pct: 110
+  max_preamble_pct: 60
+  min_correct_rate: 1.0  # every verifiable task must stay 100% correct
+
+tasks:
+  # — Wins. Keep them wins: ceilings stay negative so a regression trips the gate. —
+  ambiguous-request:       # measured: total -38%, output -54% (clarify-before-build)
+    max_total_pct: -15
+    max_output_pct: -20
+    max_preamble_pct: null # the clarifying question is *desired* preamble — don't gate
+    min_correct_rate: null # answer-only, no verifier
+  answer-question:         # measured: total -18%, output -38%, preamble -27%
+    max_total_pct: 10
+    max_output_pct: -10
+    max_preamble_pct: 35
+    min_correct_rate: null # answer-only, no verifier
+
+  # — Concrete edit tasks. Currently over control on total tokens (structural,
+  #   discipline-driven cost). Ceilings = measured delta + noise headroom. —
+  bug-fix-targeted:        # measured: total +47%, output +25%, preamble -32%
+    max_total_pct: 80
+    max_output_pct: 55
+    max_preamble_pct: 30
+  add-feature-scoped:      # measured: total +88%, output +75%, preamble -50%
+    max_total_pct: 120
+    max_output_pct: 105
+    max_preamble_pct: 10
+  refactor-no-rewrite:     # measured: total +61%, output +30%, preamble -38%
+    max_total_pct: 95
+    max_output_pct: 60
+    max_preamble_pct: 25
+  multi-file-refactor:     # measured: total +81%, output +10%, preamble +134%
+    max_total_pct: 115
+    max_output_pct: 40
+    max_preamble_pct: 200
